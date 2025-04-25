@@ -187,28 +187,26 @@
         /* --- Timer Display --- */
         /* Container for Timer and Circular Progress */
         .timer-progress-container {
-            position: relative; /* Needed for absolute positioning of timer text */
-            width: 280px; /* Keep container size */
-            height: 280px; /* Keep container size */
-            margin: 10px auto 20px auto; /* Center the container */
+            position: relative;
+            width: 250px; /* <<<< REDUCED SIZE >>>> */
+            height: 250px; /* <<<< REDUCED SIZE >>>> */
+            margin: 10px auto 20px auto;
         }
 
         .timer {
-            /* Position timer text in the center of the SVG */
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 7.5em; /* <<<< INCREASED FONT SIZE >>>> */
+            font-size: 6.5em; /* <<<< Adjusted font size to fit smaller circle >>>> */
             font-weight: 900;
             color: var(--text-color);
             line-height: 1;
             transition: color 0.2s ease-in-out;
-            /* Remove background/padding related styles */
             padding: 0;
             border-radius: 0;
             background-color: transparent;
-            min-height: auto; /* Not needed with absolute positioning */
+            min-height: auto;
         }
 
         /* Timer Phase Colors (Applied to text) */
@@ -234,16 +232,15 @@
 
         .progress-background {
             fill: none;
-            stroke: var(--progress-bg); /* Light grey background */
-            stroke-width: 12; /* Keep thickness */
+            stroke: var(--progress-bg);
+            stroke-width: 10; /* <<<< Adjusted stroke width for smaller circle >>>> */
         }
 
         .progress-bar {
             fill: none;
-            /* stroke: var(--info-color); Default color */
-            stroke-width: 12; /* Match background thickness */
-            stroke-linecap: round; /* Rounded ends */
-            transition: stroke-dashoffset 0.2s linear, stroke 0.2s ease-in-out; /* Smooth transitions */
+            stroke-width: 10; /* <<<< Adjusted stroke width >>>> */
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.2s linear, stroke 0.2s ease-in-out;
         }
 
         /* Progress Bar Phase Colors (Applied to stroke) */
@@ -254,7 +251,7 @@
         .progress-bar.phase-cooldown { stroke: var(--info-color); }
         .progress-bar.phase-ready { stroke: var(--info-color); }
         .progress-bar.paused { stroke: var(--text-muted); }
-        .progress-bar.warning { stroke: var(--danger-color) !important; } /* Warning overrides */
+        .progress-bar.warning { stroke: var(--danger-color) !important; }
         .progress-bar.phase-complete { stroke: var(--primary-color); }
 
 
@@ -324,8 +321,8 @@
         .btn-secondary:hover:not(:disabled) { background-color: var(--secondary-hover); }
         .btn-secondary.muted { background-color: var(--danger-color); }
         .btn-secondary.muted:hover:not(:disabled) { background-color: var(--danger-hover); }
-        #goToWorkoutButton, #startButton, .btn-add-exercise { background-color: var(--primary-color); }
-        #goToWorkoutButton:hover:not(:disabled), #startButton:hover:not(:disabled), .btn-add-exercise:hover:not(:disabled) { background-color: var(--primary-hover); }
+        #goToWorkoutButton, #startButton, .btn-add-exercise, #continueWorkoutButton /* NEW */ { background-color: var(--primary-color); }
+        #goToWorkoutButton:hover:not(:disabled), #startButton:hover:not(:disabled), .btn-add-exercise:hover:not(:disabled), #continueWorkoutButton:hover:not(:disabled) /* NEW */ { background-color: var(--primary-hover); }
         #pauseButton { background-color: var(--warning-color); }
         #pauseButton:hover:not(:disabled) { background-color: var(--warning-hover); }
         #resetButton, #deleteRoutineButton, .btn-remove-exercise { background-color: var(--danger-color); }
@@ -361,7 +358,7 @@
         #setupTimePreviewContainer { margin: 20px 0 10px 0; font-size: 1em; color: var(--text-muted); text-align: center; padding: 10px; background-color: var(--body-bg); border-radius: var(--border-radius); }
         #setupTimePreview { font-weight: 700; color: var(--text-color); font-size: 1.1em; }
 
-        /* --- Settings Section (NEW) --- */
+        /* --- Settings Section --- */
         #settingsSection {
              margin-top: 30px;
              padding-top: 20px;
@@ -371,31 +368,30 @@
         #settingsSection h3 {
             margin-top: 0;
             margin-bottom: 20px;
-            text-align: center; /* Center the settings title */
+            text-align: center;
         }
         .settings-group {
             margin-bottom: 15px;
         }
         .settings-group label {
-             display: inline-block; /* Align label and select */
-             width: 150px; /* Fixed width for alignment */
+             display: inline-block;
+             width: 150px;
              margin-right: 10px;
              font-weight: 500;
              font-size: 0.9em;
              color: var(--text-muted);
         }
         .settings-group select {
-             width: calc(100% - 170px); /* Adjust width to fill remaining space */
+             width: calc(100% - 170px);
              display: inline-block;
-             /* Inherit styles from .input-group select */
         }
 
 
         /* --- Phase Transition Effect --- */
-        @keyframes phaseTransitionFlash { 0% { background-color: rgba(32, 201, 151, 0); } 50% { background-color: rgba(32, 201, 151, 0.25); } /* Teal flash */ 100% { background-color: rgba(32, 201, 151, 0); } }
+        @keyframes phaseTransitionFlash { 0% { background-color: rgba(32, 201, 151, 0); } 50% { background-color: rgba(32, 201, 151, 0.25); } 100% { background-color: rgba(32, 201, 151, 0); } }
         .display-area.phase-flash-effect { animation: phaseTransitionFlash 0.4s ease-out forwards; }
 
-        /* --- Completion Animation (NEW) --- */
+        /* --- Completion Animation --- */
         @keyframes completionAnimation {
             0% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.15); opacity: 0.9; }
@@ -403,7 +399,6 @@
         }
         .workout-complete-animation {
             animation: completionAnimation 0.8s ease-in-out;
-            /* Apply to the status display when complete */
         }
 
         /* ===== CSS END ===== */
@@ -566,7 +561,7 @@
                 <button id="pauseButton" class="hidden">Tạm dừng</button>
                 <button id="resetButton" disabled>Dừng & Đặt lại</button>
                 <button id="skipButton" class="hidden">Bỏ qua Pha</button>
-            </div>
+                <button id="continueWorkoutButton" class="hidden">Tập tiếp vòng nữa</button> </div>
 
             <div class="controls secondary-controls">
                 <button id="muteButton" class="btn-secondary">Tắt Âm</button>
@@ -582,7 +577,7 @@
         <audio id="beepSound" src="https://cdn.freesound.org/previews/80/80921_10287-lq.mp3" preload="auto"></audio> <audio id="dingSound" src="https://cdn.freesound.org/previews/518/518367_1619193-lq.mp3" preload="auto"></audio> </div> <script>
         // ===== JAVASCRIPT =====
         document.addEventListener('DOMContentLoaded', () => {
-            console.log("Initializing Flexible Workout Timer v6 - Completion Animation & Larger Timer");
+            console.log("Initializing Flexible Workout Timer v7 - Resized Circle & Continue Option");
 
             // --- DOM Elements ---
             // Setup Page Elements
@@ -612,7 +607,7 @@
             const clearAndShowInputButton = document.getElementById('clearAndShowInputButton');
             const setupTimePreview = document.getElementById('setupTimePreview');
             const displayArea = workoutPage.querySelector('.display-area');
-            const timerProgressContainer = workoutPage.querySelector('.timer-progress-container'); // Get timer container (NEW)
+            const timerProgressContainer = workoutPage.querySelector('.timer-progress-container');
 
             // Settings Elements
             const soundPhaseEndSelect = document.getElementById('soundPhaseEndSelect');
@@ -633,6 +628,7 @@
             const pauseButton = document.getElementById('pauseButton');
             const resetButton = document.getElementById('resetButton');
             const skipButton = document.getElementById('skipButton');
+            const continueWorkoutButton = document.getElementById('continueWorkoutButton'); // NEW
             const muteButton = document.getElementById('muteButton');
             const backToSetupButton = document.getElementById('backToSetupButton');
             const historyList = document.getElementById('historyList');
@@ -650,7 +646,7 @@
             let workoutConfig = {
                 name: '', mode: 'simple', warmupDuration: 0, exercises: [],
                 restDuration: 0, totalRounds: 1, restBetweenRoundsDuration: 0,
-                cooldownDuration: 0, totalWorkoutTime: 0
+                cooldownDuration: 0, totalWorkoutTime: 0, initialTotalRounds: 1 // Store initial rounds (NEW)
             };
             let loadedRoutineData = null;
             let currentPhase = 'idle';
@@ -675,8 +671,10 @@
             const LAST_INPUTS_KEY = 'flexWorkoutLastInputs_v9';
             const WARNING_THRESHOLD = 5;
             const READY_DURATION = 3;
-            // Adjusted circumference for r=45, stroke-width=12 (approximate, might need fine-tuning)
-            const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * (45 - 12 / 2); // Use inner radius for calculation
+            // Circumference for r=45, stroke-width=10 (2 * PI * (45 - 10/2))
+            const CIRCLE_RADIUS = 45; // Radius of the circle path
+            const CIRCLE_STROKE_WIDTH = 10; // Stroke width
+            const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * (CIRCLE_RADIUS - CIRCLE_STROKE_WIDTH / 2);
 
 
             // ==============================
@@ -689,27 +687,29 @@
                 return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             }
 
-            function calculateTotalWorkoutTime(config) {
-                if (!config || !Array.isArray(config.exercises)) return 0;
-                let totalTime = 0;
-                totalTime += config.warmupDuration || 0;
-                totalTime += config.cooldownDuration || 0;
-                if (config.exercises.length > 0 && config.totalRounds > 0) {
-                    let singleRoundTime = 0;
-                    config.exercises.forEach((ex, index) => {
-                        singleRoundTime += ex.duration || 0;
-                        if (index < config.exercises.length - 1) {
-                            singleRoundTime += config.restDuration || 0;
-                        }
-                    });
-                    totalTime += singleRoundTime * config.totalRounds;
-                    if (config.totalRounds > 1) {
-                        totalTime += (config.restBetweenRoundsDuration || 0) * (config.totalRounds - 1);
-                    }
-                     totalTime += READY_DURATION * (config.totalRounds > 0 ? config.totalRounds : 0);
-                }
-                return totalTime;
+            // Recalculate total time based on CURRENT totalRounds in config
+            function calculateCurrentTotalWorkoutTime(config) {
+                 if (!config || !Array.isArray(config.exercises)) return 0;
+                 let totalTime = 0;
+                 totalTime += config.warmupDuration || 0;
+                 totalTime += config.cooldownDuration || 0;
+                 if (config.exercises.length > 0 && config.totalRounds > 0) {
+                     let singleRoundTime = 0;
+                     config.exercises.forEach((ex, index) => {
+                         singleRoundTime += ex.duration || 0;
+                         if (index < config.exercises.length - 1) {
+                             singleRoundTime += config.restDuration || 0;
+                         }
+                     });
+                     totalTime += singleRoundTime * config.totalRounds;
+                     if (config.totalRounds > 1) {
+                         totalTime += (config.restBetweenRoundsDuration || 0) * (config.totalRounds - 1);
+                     }
+                      totalTime += READY_DURATION * (config.totalRounds > 0 ? config.totalRounds : 0);
+                 }
+                 return totalTime;
             }
+
 
             // ==============================
             // --- PAGE NAVIGATION & SOUND ---
@@ -763,7 +763,6 @@
             function toggleMute() {
                 settings.muted = !settings.muted;
                 applyMuteState();
-                // Save settings immediately when mute is toggled
                 saveSettings();
             }
 
@@ -788,7 +787,6 @@
             // ==============================
             // --- WORKOUT HISTORY ---
             // ==============================
-            // (No changes needed in history functions)
             function loadHistory() {
                 console.log("Loading history...");
                 try {
@@ -818,11 +816,14 @@
                     const formattedDate = !isNaN(date) ? date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN') : 'Ngày lỗi';
                     let details = `"${entry.config.name || 'Không tên'}" (${entry.config.mode === 'simple' ? 'Đơn giản' : 'Nâng cao'})`;
                     if(entry.config.warmupDuration > 0) details += ` | W:${entry.config.warmupDuration}s`;
-                    details += ` | ${entry.config.exercises.length} bài x ${entry.config.totalRounds || 1} vòng`;
+                    // Display the number of rounds ACTUALLY completed in history
+                    details += ` | ${entry.config.exercises.length} bài x ${entry.config.completedRounds || entry.config.totalRounds || 1} vòng`;
                     details += ` (${entry.config.restDuration}s nghỉ)`;
-                    if(entry.config.totalRounds > 1 && entry.config.restBetweenRoundsDuration > 0) details += ` (${entry.config.restBetweenRoundsDuration}s nghỉ vòng)`;
+                    if((entry.config.completedRounds || entry.config.totalRounds || 1) > 1 && entry.config.restBetweenRoundsDuration > 0) details += ` (${entry.config.restBetweenRoundsDuration}s nghỉ vòng)`;
                     if(entry.config.cooldownDuration > 0) details += ` | C:${entry.config.cooldownDuration}s`;
-                    const totalTime = calculateTotalWorkoutTime(entry.config);
+                    // Calculate time based on completed rounds for history display
+                    const completedConfig = {...entry.config, totalRounds: entry.config.completedRounds || entry.config.totalRounds };
+                    const totalTime = calculateCurrentTotalWorkoutTime(completedConfig);
                     li.innerHTML = `<strong>${formattedDate}</strong><div class="history-details">${details} | Tổng TG: ${formatTime(totalTime)}</div>`;
                     historyList.appendChild(li);
                 }
@@ -831,6 +832,8 @@
                 if (!workoutConfig || workoutConfig.exercises.length === 0) return;
                 console.log("Saving history entry...");
                 const configForHistory = JSON.parse(JSON.stringify(workoutConfig));
+                // Store the actual number of rounds completed (NEW)
+                configForHistory.completedRounds = currentRound; // currentRound holds the last completed round number
                 const now = new Date();
                 workoutHistory.push({ timestamp: now.toISOString(), config: configForHistory });
                 if(workoutHistory.length > 50) { workoutHistory.shift(); }
@@ -841,7 +844,6 @@
             // ==============================
             // --- SETUP PAGE: UI VISIBILITY & MODE ---
             // ==============================
-            // (No changes needed in these functions)
             function showNewInputArea() {
                 if (newWorkoutParamsSection) newWorkoutParamsSection.classList.remove('hidden');
                 if (loadedRoutineInfo) loadedRoutineInfo.classList.add('hidden');
@@ -887,7 +889,6 @@
             // ==============================
             // --- SETUP PAGE: ADVANCED EXERCISE LIST MGMT ---
             // ==============================
-            // (No changes needed in these functions)
             function addExerciseInput(name = '', duration = '') {
                 if (!exerciseListContainer) return;
                 const exerciseCount = exerciseListContainer.children.length;
@@ -949,7 +950,6 @@
             // ==============================
             // --- SETUP PAGE: ROUTINE SAVE/LOAD ---
             // ==============================
-            // (No changes needed in these functions)
             function loadRoutines() {
                 console.log("Loading routines...");
                 try {
@@ -1055,7 +1055,6 @@
             // ==============================
             // --- SETUP PAGE: INPUTS HANDLING ---
             // ==============================
-            // (No changes needed in these functions)
             function handleClearInputsInternal() {
                 console.log("Clearing input fields and resetting mode.");
                 routineNameInput.value = ''; warmupDurationInput.value = '0';
@@ -1123,7 +1122,6 @@
             // =====================================
             // --- SETUP PAGE: TIME PREVIEW FUNCTION ---
             // =====================================
-            // (No changes needed in this function)
             function updateSetupTimePreview() {
                 if (!setupTimePreview) return;
                 let tempConfig = { exercises: [] };
@@ -1139,12 +1137,13 @@
                         }
                     } else { tempConfig.exercises = getExercisesFromDOM(); }
                     tempConfig.restDuration = parseInt(restDurationInput.value, 10) || 0;
-                    tempConfig.totalRounds = parseInt(totalRoundsInput.value, 10) || 1;
+                    tempConfig.totalRounds = parseInt(totalRoundsInput.value, 10) || 1; // Use input value for preview
                     tempConfig.restBetweenRoundsDuration = (tempConfig.totalRounds > 1) ? (parseInt(restBetweenRoundsInput.value, 10) || 0) : 0;
                     tempConfig.warmupDuration = parseInt(warmupDurationInput.value, 10) || 0;
                     tempConfig.cooldownDuration = parseInt(cooldownDurationInput.value, 10) || 0;
                 } else { setupTimePreview.textContent = "--:--"; return; }
-                const totalTime = calculateTotalWorkoutTime(tempConfig);
+                // Use calculateCurrentTotalWorkoutTime for preview as well
+                const totalTime = calculateCurrentTotalWorkoutTime(tempConfig);
                 if (totalTime > 0 || tempConfig.warmupDuration > 0 || tempConfig.cooldownDuration > 0 || tempConfig.exercises.length > 0) {
                      setupTimePreview.textContent = formatTime(totalTime);
                  } else { setupTimePreview.textContent = "--:--"; }
@@ -1155,7 +1154,7 @@
             // =====================================
             function prepareAndSwitchToWorkout() {
                 console.log("Preparing for workout...");
-                saveSettings(); // Save sound settings before switching
+                saveSettings();
 
                 let configSource;
                 if (loadedRoutineData) {
@@ -1191,11 +1190,13 @@
                     exercises: configSource.exercises || [],
                     restDuration: configSource.restDuration || 0,
                     totalRounds: configSource.totalRounds || 1,
+                    initialTotalRounds: configSource.totalRounds || 1, // Store initial rounds (NEW)
                     restBetweenRoundsDuration: configSource.restBetweenRoundsDuration || 0,
                     cooldownDuration: configSource.cooldownDuration || 0,
                     totalWorkoutTime: 0
                 };
-                workoutConfig.totalWorkoutTime = calculateTotalWorkoutTime(workoutConfig);
+                // Calculate initial total time based on initial rounds
+                workoutConfig.totalWorkoutTime = calculateCurrentTotalWorkoutTime(workoutConfig);
                 console.log("Final workout config:", workoutConfig);
                 if (workoutConfig.exercises.length === 0 || (workoutConfig.totalWorkoutTime <= 0 && workoutConfig.warmupDuration <=0 && workoutConfig.cooldownDuration <=0) ) {
                     alert("Cấu hình không hợp lệ hoặc không có bài tập nào. Không thể bắt đầu."); return;
@@ -1221,21 +1222,27 @@
                 console.log("Resetting timer state for new workout.");
                 clearInterval(timerIntervalId); timerIntervalId = null;
                 currentPhase = 'idle'; currentExerciseIndex = -1; currentRound = 1;
+                // Reset total rounds to the initial value if it was increased (NEW)
+                if(workoutConfig.initialTotalRounds) {
+                    workoutConfig.totalRounds = workoutConfig.initialTotalRounds;
+                }
                 currentTimeRemaining = 0; currentPhaseTotalDuration = 0;
                 isPaused = false; totalElapsedTime = 0;
                 releaseWakeLock();
-                if (startButton && pauseButton && resetButton && backToSetupButton && skipButton) {
+                if (startButton && pauseButton && resetButton && backToSetupButton && skipButton && continueWorkoutButton) { // Check continue button
                     startButton.textContent = 'Bắt đầu Tập'; startButton.classList.remove('hidden');
                     pauseButton.classList.add('hidden'); resetButton.disabled = true;
-                    skipButton.classList.add('hidden'); backToSetupButton.classList.remove('hidden');
+                    skipButton.classList.add('hidden');
+                    continueWorkoutButton.classList.add('hidden'); // Hide continue button on reset (NEW)
+                    backToSetupButton.classList.remove('hidden');
                 }
                 if(elapsedTimeDisplay) elapsedTimeDisplay.textContent = formatTime(0);
                 if(roundDisplay) roundDisplay.textContent = `${currentRound}/${workoutConfig.totalRounds || '?'}`;
                 if(exerciseNameDisplay) exerciseNameDisplay.textContent = '';
                 setCircleProgress(0);
                 if(overallProgress) overallProgress.value = 0;
-                if(timerProgressContainer) timerProgressContainer.classList.remove('hidden'); // Ensure timer is visible (NEW)
-                if(statusDisplay) statusDisplay.classList.remove('workout-complete-animation'); // Remove animation class (NEW)
+                if(timerProgressContainer) timerProgressContainer.classList.remove('hidden');
+                if(statusDisplay) statusDisplay.classList.remove('workout-complete-animation');
                 updateWorkoutPageDisplay();
             }
 
@@ -1245,24 +1252,22 @@
 
                 const seconds = Math.max(0, currentTimeRemaining);
 
-                // Hide timer container and show only status on complete (NEW)
                  if (currentPhase === 'complete') {
-                     timerProgressContainer.classList.add('hidden'); // Hide the timer circle
-                     statusDisplay.textContent = "Chúc mừng bạn đã hoàn thành!";
-                     statusDisplay.classList.add('workout-complete-animation'); // Add animation class
-                     exerciseNameDisplay.textContent = '🎉'; // Show celebration icon
+                     timerProgressContainer.classList.add('hidden');
+                     // Modify completion message (NEW)
+                     statusDisplay.textContent = `Đã hoàn thành ${workoutConfig.totalRounds} vòng!`;
+                     statusDisplay.classList.add('workout-complete-animation');
+                     exerciseNameDisplay.textContent = '🎉';
                      overallProgress.value = 100;
-                     elapsedTimeDisplay.textContent = formatTime(workoutConfig.totalWorkoutTime);
+                     // Calculate elapsed time based on potentially increased rounds (NEW)
+                     elapsedTimeDisplay.textContent = formatTime(calculateCurrentTotalWorkoutTime(workoutConfig));
                      roundDisplay.textContent = `${workoutConfig.totalRounds}/${workoutConfig.totalRounds}`;
-                     return; // Stop further updates for complete state
+                     return;
                  } else {
-                    // Ensure timer is visible if not complete
                     timerProgressContainer.classList.remove('hidden');
-                    statusDisplay.classList.remove('workout-complete-animation'); // Remove animation class if not complete
+                    statusDisplay.classList.remove('workout-complete-animation');
                  }
 
-
-                // --- Update Timer Display & Circle Color/Class ---
                 timerDisplay.textContent = `${Math.floor(seconds)}`;
                 timerDisplay.className = 'timer';
                 currentProgressCircle.setAttribute('class', 'progress-bar');
@@ -1280,7 +1285,6 @@
                     }
                 }
 
-                // --- Update Status and Exercise Name ---
                 let currentStatusText = ''; let currentExerciseName = '';
                  if (isPaused) {
                     currentStatusText = `Đã tạm dừng (Vòng ${currentRound}/${workoutConfig.totalRounds})`;
@@ -1310,50 +1314,52 @@
                             currentExerciseName = `Chuẩn bị cho Vòng ${currentRound + 1}`;
                             break;
                         case 'cooldown': currentStatusText = `Đang giãn cơ`; break;
-                        // Complete state handled above
                         default: currentStatusText = "Trạng thái không xác định";
                     }
                 }
-                // Update text content if not complete
                 statusDisplay.textContent = currentStatusText;
                 exerciseNameDisplay.textContent = currentExerciseName;
 
-
-                // --- Update Progress ---
                 let currentProgressPercent = 0;
-                if (currentPhaseTotalDuration > 0 && currentPhase !== 'idle') { // Removed complete check as it's handled above
+                if (currentPhaseTotalDuration > 0 && currentPhase !== 'idle') {
                     currentProgressPercent = ((currentPhaseTotalDuration - currentTimeRemaining) / currentPhaseTotalDuration) * 100;
                 }
                 setCircleProgress(Math.min(100, Math.max(0, currentProgressPercent)));
 
                 let overallProgressValue = 0;
-                if (workoutConfig.totalWorkoutTime > 0 && currentPhase !== 'idle') {
-                    overallProgressValue = (totalElapsedTime / workoutConfig.totalWorkoutTime) * 100;
+                // Calculate overall progress based on potentially increased total time (NEW)
+                const currentTotalTime = calculateCurrentTotalWorkoutTime(workoutConfig);
+                if (currentTotalTime > 0 && currentPhase !== 'idle') {
+                    overallProgressValue = (totalElapsedTime / currentTotalTime) * 100;
                 }
                 overallProgress.value = Math.min(100, Math.max(0, overallProgressValue));
 
-                // --- Update Elapsed Time and Round Display ---
                 elapsedTimeDisplay.textContent = formatTime(totalElapsedTime);
-                roundDisplay.textContent = (currentPhase !== 'idle') ? `${currentRound}/${workoutConfig.totalRounds}` : `--/--`; // Removed complete check
+                roundDisplay.textContent = (currentPhase !== 'idle') ? `${currentRound}/${workoutConfig.totalRounds}` : `--/--`;
             }
 
-             /** Finalizes the workout. */
+             /** Finalizes the workout or current set of rounds. */
              function triggerWorkoutCompletion() {
-                 console.log("Workout complete!");
+                 console.log("Target rounds complete!");
                  clearInterval(timerIntervalId); timerIntervalId = null;
-                 currentPhase = 'complete'; isPaused = false;
-                 saveHistoryEntry(); releaseWakeLock();
+                 currentPhase = 'complete'; // Set phase to complete
+                 isPaused = false;
+                 saveHistoryEntry(); // Save history with completed rounds
+                 releaseWakeLock();
 
-                 // Update UI specifically for completion state (NEW)
-                 updateWorkoutPageDisplay(); // This will now hide timer and show animation
+                 updateWorkoutPageDisplay(); // Update UI to show completion state
 
-                 if (startButton && pauseButton && resetButton && backToSetupButton && skipButton) {
-                     startButton.classList.add('hidden'); pauseButton.classList.add('hidden');
-                     resetButton.disabled = true; skipButton.classList.add('hidden');
-                     backToSetupButton.classList.remove('hidden');
+                 // Show Continue and Back buttons, hide others (NEW)
+                 if (startButton && pauseButton && resetButton && backToSetupButton && skipButton && continueWorkoutButton) {
+                     startButton.classList.add('hidden');
+                     pauseButton.classList.add('hidden');
+                     resetButton.disabled = true; // Keep reset disabled
+                     skipButton.classList.add('hidden');
+                     continueWorkoutButton.classList.remove('hidden'); // Show continue button
+                     backToSetupButton.classList.remove('hidden'); // Show back button
                  }
                  playSound('complete');
-                 triggerPhaseFlash(); // Keep the background flash
+                 triggerPhaseFlash();
              }
 
             /** The main timer loop function. */
@@ -1397,21 +1403,40 @@
                     case 'exercise':
                         const isLastExerciseInRound = currentExerciseIndex >= workoutConfig.exercises.length - 1;
                         if (isLastExerciseInRound) {
+                            // Check against CURRENT totalRounds (which might have increased) (NEW)
                             if (currentRound >= workoutConfig.totalRounds) {
-                                if (workoutConfig.cooldownDuration > 0) { nextPhase = 'cooldown'; nextDuration = workoutConfig.cooldownDuration; }
-                                else { triggerWorkoutCompletion(); return; }
+                                // --- End of Last *Target* Round ---
+                                if (workoutConfig.cooldownDuration > 0) {
+                                    nextPhase = 'cooldown';
+                                    nextDuration = workoutConfig.cooldownDuration;
+                                } else {
+                                    // No cooldown, workout complete (or ready to continue)
+                                    triggerWorkoutCompletion();
+                                    return;
+                                }
                             } else {
-                                if (workoutConfig.restBetweenRoundsDuration > 0) { nextPhase = 'roundRest'; nextDuration = workoutConfig.restBetweenRoundsDuration; }
-                                else { currentRound++; currentExerciseIndex = 0; nextPhase = 'ready'; nextDuration = READY_DURATION; }
+                                // --- End of Intermediate Round ---
+                                if (workoutConfig.restBetweenRoundsDuration > 0) {
+                                    nextPhase = 'roundRest';
+                                    nextDuration = workoutConfig.restBetweenRoundsDuration;
+                                } else {
+                                    currentRound++; currentExerciseIndex = 0;
+                                    nextPhase = 'ready'; nextDuration = READY_DURATION;
+                                }
                             }
                         } else {
-                            if (workoutConfig.restDuration > 0) { nextPhase = 'rest'; nextDuration = workoutConfig.restDuration; }
-                            else { currentExerciseIndex++; nextPhase = 'exercise'; nextDuration = workoutConfig.exercises[currentExerciseIndex]?.duration || 0; }
+                            // --- Middle of a Round ---
+                            if (workoutConfig.restDuration > 0) {
+                                nextPhase = 'rest'; nextDuration = workoutConfig.restDuration;
+                            } else {
+                                currentExerciseIndex++; nextPhase = 'exercise';
+                                nextDuration = workoutConfig.exercises[currentExerciseIndex]?.duration || 0;
+                            }
                         }
                         break;
                     case 'rest': currentExerciseIndex++; nextPhase = 'exercise'; nextDuration = workoutConfig.exercises[currentExerciseIndex]?.duration || 0; break;
                     case 'roundRest': currentRound++; currentExerciseIndex = 0; nextPhase = 'ready'; nextDuration = READY_DURATION; break;
-                    case 'cooldown': triggerWorkoutCompletion(); return;
+                    case 'cooldown': triggerWorkoutCompletion(); return; // Cooldown always triggers completion
                     case 'idle': case 'complete': resetTimerStateForNewWorkout(); return;
                     default: console.error("Unknown phase transition from:", currentPhase); nextPhase = 'idle'; nextDuration = 0;
                 }
@@ -1423,9 +1448,9 @@
 
             /** Handles click on the Start/Resume button. */
             function handleStartResumeClick() {
-                if (!startButton || !pauseButton || !resetButton || !backToSetupButton || !skipButton) return;
+                if (!startButton || !pauseButton || !resetButton || !backToSetupButton || !skipButton || !continueWorkoutButton) return;
                  if (currentPhase === 'idle' || currentPhase === 'complete') {
-                     if (!workoutConfig || !workoutConfig.exercises || workoutConfig.exercises.length === 0 || (workoutConfig.totalWorkoutTime <= 0 && workoutConfig.warmupDuration <=0 && workoutConfig.cooldownDuration <=0) ) {
+                     if (!workoutConfig || !workoutConfig.exercises || workoutConfig.exercises.length === 0 || (calculateCurrentTotalWorkoutTime(workoutConfig) <= 0 && workoutConfig.warmupDuration <=0 && workoutConfig.cooldownDuration <=0) ) {
                          alert("Cấu hình bài tập không hợp lệ hoặc chưa được tải/nhập. Vui lòng quay lại Cài đặt."); return;
                      }
                  }
@@ -1436,10 +1461,16 @@
                     startButton.classList.add('hidden'); pauseButton.classList.remove('hidden');
                     resetButton.disabled = false;
                     skipButton.classList.toggle('hidden', !['warmup', 'exercise', 'rest', 'roundRest', 'cooldown'].includes(currentPhase));
+                    continueWorkoutButton.classList.add('hidden'); // Hide continue when resuming
                     backToSetupButton.classList.add('hidden');
                 } else if (currentPhase === 'idle' || currentPhase === 'complete') {
                     console.log("Starting new workout sequence...");
-                    resetTimerStateForNewWorkout(); totalElapsedTime = 0;
+                    // If starting after completion, reset rounds to initial value before starting
+                    if(currentPhase === 'complete' && workoutConfig.initialTotalRounds) {
+                        workoutConfig.totalRounds = workoutConfig.initialTotalRounds;
+                    }
+                    resetTimerStateForNewWorkout(); // Reset display and state vars
+                    totalElapsedTime = 0; // Explicitly reset elapsed time
                     let firstPhase = 'ready'; let firstDuration = READY_DURATION; currentExerciseIndex = 0;
                     if (workoutConfig.warmupDuration > 0) {
                         firstPhase = 'warmup'; firstDuration = workoutConfig.warmupDuration; currentExerciseIndex = -1;
@@ -1452,6 +1483,7 @@
                     pauseButton.classList.toggle('hidden', firstPhase === 'ready');
                     resetButton.disabled = false;
                     skipButton.classList.toggle('hidden', firstPhase !== 'warmup');
+                    continueWorkoutButton.classList.add('hidden'); // Hide continue when starting
                     backToSetupButton.classList.add('hidden');
                 }
                 updateWorkoutPageDisplay();
@@ -1459,19 +1491,22 @@
 
             /** Handles click on the Pause button. */
             function handlePauseClick() {
-                if (!startButton || !pauseButton || !resetButton || !backToSetupButton || !skipButton) return;
+                if (!startButton || !pauseButton || !resetButton || !backToSetupButton || !skipButton || !continueWorkoutButton) return;
                 if (timerIntervalId !== null && !isPaused && !['idle', 'complete', 'ready'].includes(currentPhase)) {
                     console.log("Pausing timer."); isPaused = true; releaseWakeLock();
                     pauseButton.classList.add('hidden'); startButton.classList.remove('hidden');
                     startButton.textContent = 'Tiếp tục'; resetButton.disabled = false;
-                    skipButton.classList.add('hidden'); backToSetupButton.classList.remove('hidden');
+                    skipButton.classList.add('hidden');
+                    continueWorkoutButton.classList.add('hidden'); // Hide continue when paused
+                    backToSetupButton.classList.remove('hidden');
                     updateWorkoutPageDisplay();
                 }
             }
 
             /** Handles click on the Reset button. */
             function handleResetClick() {
-                if ((timerIntervalId !== null || isPaused) && currentPhase !== 'idle' && currentPhase !== 'complete') {
+                // Allow reset if timer has started, is paused, or workout is complete (NEW)
+                if ((timerIntervalId !== null || isPaused || currentPhase === 'complete') && currentPhase !== 'idle') {
                     if (confirm("Bạn có chắc muốn dừng và đặt lại bài tập hiện tại không? Tiến trình sẽ bị mất.")) {
                         console.log("Resetting timer on workout page.");
                         clearInterval(timerIntervalId); timerIntervalId = null;
@@ -1486,16 +1521,56 @@
                     console.log(`Skipping current phase: ${currentPhase}`);
                     totalElapsedTime += Math.max(0, currentTimeRemaining);
                     currentTimeRemaining = -1;
-                    updateWorkoutPageDisplay(); // Update display immediately after setting time to -1
-                    // runTimerInterval will handle the phase transition on the next tick
+                    updateWorkoutPageDisplay();
                 }
             }
+
+             /** Handles click on the Continue Workout button (NEW) */
+             function handleContinueWorkoutClick() {
+                 if (currentPhase !== 'complete') return; // Only works when complete
+
+                 console.log("Continuing workout for another round.");
+                 workoutConfig.totalRounds++; // Increment target rounds
+
+                 // Hide continue button, show pause/skip
+                 if (continueWorkoutButton) continueWorkoutButton.classList.add('hidden');
+                 if (backToSetupButton) backToSetupButton.classList.add('hidden');
+                 if (pauseButton) pauseButton.classList.remove('hidden'); // Show pause
+                 if (skipButton) skipButton.classList.remove('hidden'); // Show skip
+                 if (resetButton) resetButton.disabled = false; // Re-enable reset
+
+                 // Determine next phase (usually roundRest or ready)
+                 let nextPhase = 'ready';
+                 let nextDuration = READY_DURATION;
+                 if (workoutConfig.restBetweenRoundsDuration > 0) {
+                     nextPhase = 'roundRest';
+                     nextDuration = workoutConfig.restBetweenRoundsDuration;
+                 } else {
+                     currentRound++; // Increment round counter immediately if no round rest
+                     currentExerciseIndex = 0;
+                 }
+
+                 currentPhase = nextPhase;
+                 currentTimeRemaining = nextDuration;
+                 currentPhaseTotalDuration = nextDuration;
+                 isPaused = false; // Ensure not paused
+
+                 // Restart timer
+                 if (timerIntervalId) clearInterval(timerIntervalId);
+                 timerIntervalId = setInterval(runTimerInterval, 1000);
+
+                 // Re-acquire wake lock if needed
+                 if (wakeLockButton?.classList.contains('wakelock-active')) {
+                     requestWakeLock();
+                 }
+
+                 updateWorkoutPageDisplay(); // Update UI for the new round
+             }
 
 
             // =====================================
             // --- SCREEN WAKE LOCK FUNCTIONS ---
             // =====================================
-            // (No changes needed in wake lock functions)
             function updateWakeLockButtonState(isActive) {
                 if (!wakeLockButton) return;
                 if (isActive) { wakeLockButton.textContent = 'Đang giữ sáng'; wakeLockButton.classList.add('wakelock-active'); }
@@ -1587,11 +1662,16 @@
             addSafeEventListener(pauseButton, 'click', handlePauseClick, 'pauseButton');
             addSafeEventListener(resetButton, 'click', handleResetClick, 'resetButton');
             addSafeEventListener(skipButton, 'click', handleSkipClick, 'skipButton');
+            addSafeEventListener(continueWorkoutButton, 'click', handleContinueWorkoutClick, 'continueWorkoutButton'); // NEW
             addSafeEventListener(muteButton, 'click', toggleMute, 'muteButton');
             addSafeEventListener(backToSetupButton, 'click', () => {
                 console.log("Back to Setup clicked.");
                 if (currentPhase === 'idle' || currentPhase === 'complete' || isPaused) {
-                    if (isPaused) { if (!confirm("Bài tập đang tạm dừng. Quay lại cài đặt sẽ hủy tiến trình hiện tại. Tiếp tục?")) { return; } }
+                    if (isPaused || currentPhase === 'complete') { // Ask confirmation if paused OR complete (as continue is possible)
+                        if (!confirm("Quay lại cài đặt sẽ hủy tiến trình hiện tại (kể cả các vòng đã tập thêm). Tiếp tục?")) {
+                            return;
+                        }
+                    }
                     clearInterval(timerIntervalId); timerIntervalId = null; releaseWakeLock();
                     resetTimerStateForNewWorkout(); showPage('setupPage');
                 } else { alert("Vui lòng tạm dừng hoặc dừng hẳn bài tập trước khi quay lại Cài đặt."); }
@@ -1610,6 +1690,12 @@
             updateRemoveLastButtonState();
             showPage('setupPage');
             updateSetupTimePreview();
+            // Recalculate circle circumference on init (needed after CSS changes)
+            // const radius = parseFloat(currentProgressCircle.getAttribute('r'));
+            // const strokeWidth = parseFloat(window.getComputedStyle(currentProgressCircle).strokeWidth);
+            // CIRCLE_CIRCUMFERENCE = 2 * Math.PI * (radius - strokeWidth / 2); // This should be done after styles are applied
+            // console.log("Calculated circumference:", CIRCLE_CIRCUMFERENCE); // Log calculated value
+
             console.log("App initialized.");
 
         }); // End of DOMContentLoaded
