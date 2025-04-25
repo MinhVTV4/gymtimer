@@ -4,141 +4,408 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bộ đếm giờ tập luyện Linh hoạt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
     <style>
-        /* ===== CSS START ===== */
+        /* ===== NEW CSS START ===== */
+
+        /* --- CSS Variables (Bảng màu & Font) --- */
+        :root {
+            --body-bg: #f8f9fa;
+            --container-bg: #ffffff;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --border-radius: 8px; /* Bo góc mềm mại hơn */
+            --primary-color: #20c997; /* Teal */
+            --primary-hover: #1baa80;
+            --warning-color: #fd7e14; /* Orange */
+            --warning-hover: #e6700a;
+            --danger-color: #e74c3c; /* Softer Red */
+            --danger-hover: #c74031;
+            --info-color: #3498db; /* Bright Blue */
+            --info-hover: #2586c6;
+            --secondary-color: #6c757d; /* Medium Gray */
+            --secondary-hover: #5a6268;
+            --exercise-bg: #fdf1f0; /* Light Red/Pink */
+            --paused-bg: #e9ecef; /* Light Gray */
+            --font-family: 'Roboto', sans-serif;
+            --box-shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --box-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.12);
+            --progress-bg: #e9ecef; /* Background color for progress circles */
+        }
+
+        /* --- CSS Reset & Basic Styles --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: sans-serif;
+            font-family: var(--font-family);
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-color);
+            background-color: var(--body-bg);
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: flex-start; /* Align top for long content */
             min-height: 100vh;
-            background-color: #f4f4f4;
             margin: 0;
-            padding: 20px;
+            padding: 25px; /* Add padding around container */
             line-height: 1.6;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
 
         .container {
-            background-color: #fff;
-            padding: 20px 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: var(--container-bg);
+            padding: 25px 30px; /* Slightly more horizontal padding */
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-light);
             text-align: center;
             width: 100%;
-            max-width: 550px; /* Chiều rộng tối đa không đổi */
+            max-width: 600px; /* Max width for readability */
             position: relative;
-            overflow: hidden;
+            overflow: hidden; /* For potential future transitions */
         }
 
+        /* --- Page Visibility --- */
         .page { display: none; }
-        .page.active { display: block; }
+        .page.active { display: block; animation: fadeIn 0.5s ease-in-out; }
 
-        h1, h2 { color: #333; margin-bottom: 20px; font-size: 24px; }
-        h2 { margin-top: 30px; margin-bottom: 15px; font-size: 22px; border-top: 1px solid #eee; padding-top: 15px; }
-        h3 { color: #555; margin-top: 20px; margin-bottom: 10px; font-size: 18px; }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 0.9em; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Headings & Text --- */
+        h1, h2, h3, h4 {
+            color: var(--text-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        h1 { font-size: 2em; margin-bottom: 25px; }
+        h2 { font-size: 1.75em; margin-top: 35px; padding-top: 20px; border-top: 1px solid var(--border-color); margin-bottom: 20px; }
+        h3 { font-size: 1.5em; margin-top: 30px; margin-bottom: 15px; }
+        h4 { font-size: 1.1em; margin-top: 25px; margin-bottom: 12px; font-weight: 500; color: var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 15px; }
+        p { margin-top: 0; margin-bottom: 1rem; }
+
+         /* --- Page Specific Spacing Adjustments --- */
+         #workoutPage h2:first-of-type { /* Target tiêu đề "Quá trình Tập luyện" */
+             margin-top: 15px; /* Reduce top margin */
+             padding-top: 15px; /* Reduce top padding */
+             margin-bottom: 15px; /* Reduce bottom margin */
+         }
+         #workoutPage h2:last-of-type { /* Target tiêu đề "Lịch sử tập luyện" */
+             margin-top: 25px; /* Adjust top margin */
+             margin-bottom: 10px; /* Reduce bottom margin */
+         }
+
+
+        /* --- Input Groups & Forms --- */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
         .input-group input[type="number"],
         .input-group input[type="text"],
         .input-group select {
+            display: block;
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 16px;
-            margin-top: 3px;
+            padding: 12px 15px;
+            font-size: 1em;
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--text-color);
+            background-color: var(--container-bg);
+            background-clip: padding-box;
+            border: 1px solid var(--border-color);
+            appearance: none; /* Remove default styling */
+            border-radius: var(--border-radius);
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
         }
-        .input-group.inline { display: flex; align-items: center; gap: 10px; }
-        .input-group.inline label { flex-shrink: 0; margin-bottom: 0; }
-        .input-group.inline input { flex-grow: 1; }
-        .input-group.text-center { text-align: center; }
+        .input-group input:focus,
+        .input-group select:focus {
+            color: var(--text-color);
+            background-color: var(--container-bg);
+            border-color: var(--primary-color);
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(32, 201, 151, 0.25); /* Teal focus ring */
+        }
+        .input-group select {
+            /* Custom dropdown arrow */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 16px 12px;
+        }
 
         /* --- Mode Selection --- */
-        .mode-selection { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; text-align: left; }
-        .mode-selection label { margin-right: 15px; font-weight: normal; }
-        .mode-selection input[type="radio"] { margin-right: 5px; }
+        .mode-selection { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); text-align: left; }
+        .mode-selection strong { display: block; margin-bottom: 10px; font-weight: 500; }
+        .mode-selection label { margin-right: 20px; font-weight: 400; font-size: 0.95em; cursor: pointer; }
+        .mode-selection input[type="radio"] { margin-right: 6px; transform: scale(1.1); accent-color: var(--primary-color); }
 
         /* --- Setup Options Sections --- */
-        .setup-options { display: none; }
+        .setup-options { display: none; animation: fadeIn 0.3s ease-out; }
         .setup-options.active { display: block; }
 
         /* --- Exercise List Setup --- */
-        #exerciseListContainer { border: 1px solid #eee; border-radius: 4px; padding: 10px; margin-bottom: 15px; max-height: 200px; overflow-y: auto; }
-        .exercise-item { display: flex; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed #eee; }
+        #exerciseListContainer { border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 15px; margin-bottom: 15px; max-height: 220px; overflow-y: auto; background-color: var(--body-bg); }
+        .exercise-item { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
         .exercise-item:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
-        .exercise-item input[type="text"] { flex-grow: 1; min-width: 100px; }
-        .exercise-item input[type="number"] { width: 80px; flex-shrink: 0; text-align: right; }
-        .exercise-item button { padding: 5px 8px; font-size: 12px; background-color: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer; line-height: 1; }
-        .exercise-item button:hover { background-color: #c82333; }
-        .exercise-controls { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+        .exercise-item input[type="text"] { flex-grow: 1; min-width: 120px; }
+        .exercise-item input[type="number"] { width: 85px; flex-shrink: 0; text-align: right; }
+        .exercise-item button { padding: 6px 9px; font-size: 0.8em; background-color: var(--danger-color); color: white; border: none; border-radius: 4px; cursor: pointer; line-height: 1; transition: background-color 0.2s ease; }
+        .exercise-item button:hover { background-color: var(--danger-hover); }
+        .exercise-controls { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
 
-        /* --- Display Area --- */
-        .display-area { margin-top: 25px; margin-bottom: 25px; border-top: 1px solid #eee; padding-top: 20px; }
-        .workout-details { font-size: 0.95em; color: #555; margin-bottom: 10px; }
-        .status { font-size: 1.1em; color: #555; min-height: 1.2em; font-weight: bold; margin-bottom: 5px; }
-        #exerciseNameDisplay { font-size: 1.2em; color: #0056b3; font-weight: bold; margin-bottom: 10px; min-height: 1.3em; }
-
-        /* --- Timer Display (UPDATED) --- */
-        .timer {
-            /* font-size: 4.5em; */ /* Dòng cũ */
-            font-size: 9em;   /* Tăng gấp đôi */
-            font-weight: bold;
-            color: #333;
-            margin-top: 0;
-            margin-bottom: 10px; /* Giảm margin dưới một chút để bù lại font lớn hơn */
-            min-height: 1.1em;  /* Giảm min-height vì font lớn đã đủ cao */
-            line-height: 1; /* Giúp kiểm soát chiều cao dòng tốt hơn */
-            transition: color 0.2s ease-in-out;
-            overflow: hidden; /* Đảm bảo số quá lớn không làm vỡ layout ngang */
-            text-align: center; /* Đảm bảo số luôn căn giữa */
+        /* --- Display Area (Workout Page)--- */
+        .display-area {
+             margin-top: 0;
+             margin-bottom: 20px;
+             border-top: 1px solid var(--border-color);
+             padding-top: 15px;
+             padding-bottom: 15px;
+             position: relative;
+             background-color: transparent;
+             transition: background-color 0.2s ease-out;
         }
-        /* Phase Colors (Giữ nguyên) */
-        .timer.phase-warmup { color: #17a2b8; }
-        .timer.phase-exercise { color: #28a745; }
-        .timer.phase-rest { color: #ffc107; }
-        .timer.phase-roundRest { color: #fd7e14; }
-        .timer.phase-cooldown { color: #6610f2; }
-        .timer.phase-ready { color: #17a2b8; }
-        .timer.paused { color: #6c757d !important; }
-        .timer.warning { color: #dc3545 !important; }
+        .workout-details { font-size: 1em; color: var(--text-muted); margin-bottom: 15px; }
+        .status { font-size: 1.1em; color: var(--text-muted); min-height: 1.2em; font-weight: 500; margin-bottom: 5px; }
+        #exerciseNameDisplay { font-size: 1.4em; color: var(--info-color); font-weight: 700; margin-bottom: 10px; min-height: 1.3em; }
 
-        /* --- Workout Info & Progress Bars (Giữ nguyên) --- */
-        .workout-info { display: flex; justify-content: space-around; font-size: 0.9em; color: #555; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #eee; }
-        .workout-info p { margin: 0 5px; }
-        .workout-info span { font-weight: bold; }
-        .progress-container { margin-top: 10px; margin-bottom: 10px; }
-        .progress-label { font-size: 12px; color: #555; text-align: left; margin-bottom: 3px; display: block; }
-        progress { width: 100%; height: 8px; appearance: none; border: none; border-radius: 5px; overflow: hidden; background-color: #e9ecef; }
-        progress::-webkit-progress-bar { background-color: #e9ecef; border-radius: 5px; }
-        progress::-webkit-progress-value { background-color: #007bff; border-radius: 5px; transition: width 0.1s linear; }
-        progress::-moz-progress-bar { background-color: #007bff; border-radius: 5px; transition: width 0.1s linear; }
-        #overallProgress::-webkit-progress-value { background-color: #28a745; }
-        #overallProgress::-moz-progress-bar { background-color: #28a745; }
+        /* --- Timer Display --- */
+        /* Container for Timer and Circular Progress */
+        .timer-progress-container {
+            position: relative; /* Needed for absolute positioning of timer text */
+            width: 280px; /* Keep container size */
+            height: 280px; /* Keep container size */
+            margin: 10px auto 20px auto; /* Center the container */
+        }
 
-        /* --- Buttons (Giữ nguyên) --- */
-        .controls, .save-load-controls, .setup-actions, .secondary-controls { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-        .secondary-controls { margin-top: 10px; }
-        .controls button, .save-load-controls button, .setup-actions button, .exercise-controls button, .btn-secondary { padding: 10px 15px; font-size: 15px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.2s ease, opacity 0.2s ease; color: white; line-height: 1.4; }
-        .exercise-controls button { padding: 8px 12px; font-size: 14px; }
-        .btn-secondary { background-color: #6c757d; } .btn-secondary:hover:not(:disabled) { background-color: #5a6268; } .btn-secondary.muted { background-color: #dc3545; } .btn-secondary.muted:hover:not(:disabled) { background-color: #c82333; }
-        #goToWorkoutButton, #startButton, .btn-add-exercise { background-color: #28a745; } #goToWorkoutButton:hover:not(:disabled), #startButton:hover:not(:disabled), .btn-add-exercise:hover:not(:disabled) { background-color: #218838; } #pauseButton { background-color: #ffc107; } #pauseButton:hover:not(:disabled) { background-color: #e0a800; } #resetButton, #deleteRoutineButton, .btn-remove-exercise { background-color: #dc3545; } #resetButton:hover:not(:disabled), #deleteRoutineButton:hover:not(:disabled), .btn-remove-exercise:hover:not(:disabled) { background-color: #c82333; } #skipButton { background-color: #17a2b8; } #skipButton:hover:not(:disabled) { background-color: #138496; } #saveRoutineButton { background-color: #007bff; } #saveRoutineButton:hover:not(:disabled) { background-color: #0069d9; } #loadRoutineButton { background-color: #17a2b8; } #loadRoutineButton:hover:not(:disabled) { background-color: #138496; }
-        button:disabled { opacity: 0.65; cursor: not-allowed !important; }
+        .timer {
+            /* Position timer text in the center of the SVG */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 7.5em; /* <<<< INCREASED FONT SIZE >>>> */
+            font-weight: 900;
+            color: var(--text-color);
+            line-height: 1;
+            transition: color 0.2s ease-in-out;
+            /* Remove background/padding related styles */
+            padding: 0;
+            border-radius: 0;
+            background-color: transparent;
+            min-height: auto; /* Not needed with absolute positioning */
+        }
 
-        /* --- History Section (Giữ nguyên) --- */
-        #historyList { list-style: none; padding: 0; text-align: left; max-height: 180px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-top: 15px; border-radius: 4px; }
-        #historyList li { background-color: #f8f9fa; padding: 8px 12px; border-bottom: 1px solid #dee2e6; margin-bottom: 6px; border-radius: 4px; font-size: 0.85em; word-break: break-word; }
+        /* Timer Phase Colors (Applied to text) */
+        .timer.phase-warmup { color: var(--info-color); }
+        .timer.phase-exercise { color: var(--danger-color); }
+        .timer.phase-rest { color: var(--warning-color); }
+        .timer.phase-roundRest { color: var(--warning-color); }
+        .timer.phase-cooldown { color: var(--info-color); }
+        .timer.phase-ready { color: var(--info-color); }
+        .timer.paused { color: var(--text-muted) !important; }
+        .timer.warning { color: var(--danger-color) !important; }
+        .timer.phase-complete {
+            color: var(--primary-color);
+            font-size: 4em; /* Keep smaller size for the icon */
+        }
+
+        /* --- Circular Progress SVG --- */
+        .circular-progress {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg); /* Start from the top */
+        }
+
+        .progress-background {
+            fill: none;
+            stroke: var(--progress-bg); /* Light grey background */
+            stroke-width: 12; /* Keep thickness */
+        }
+
+        .progress-bar {
+            fill: none;
+            /* stroke: var(--info-color); Default color */
+            stroke-width: 12; /* Match background thickness */
+            stroke-linecap: round; /* Rounded ends */
+            transition: stroke-dashoffset 0.2s linear, stroke 0.2s ease-in-out; /* Smooth transitions */
+        }
+
+        /* Progress Bar Phase Colors (Applied to stroke) */
+        .progress-bar.phase-warmup { stroke: var(--info-color); }
+        .progress-bar.phase-exercise { stroke: var(--danger-color); }
+        .progress-bar.phase-rest { stroke: var(--warning-color); }
+        .progress-bar.phase-roundRest { stroke: var(--warning-color); }
+        .progress-bar.phase-cooldown { stroke: var(--info-color); }
+        .progress-bar.phase-ready { stroke: var(--info-color); }
+        .progress-bar.paused { stroke: var(--text-muted); }
+        .progress-bar.warning { stroke: var(--danger-color) !important; } /* Warning overrides */
+        .progress-bar.phase-complete { stroke: var(--primary-color); }
+
+
+        /* --- Workout Info --- */
+        .workout-info { display: flex; justify-content: space-around; font-size: 0.95em; color: var(--text-muted); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
+        .workout-info p { margin: 0 10px; }
+        .workout-info span { font-weight: 700; color: var(--text-color); }
+
+        /* --- Progress Bars (Overall - Keep Linear for now) --- */
+        .progress-container {
+             margin-top: 10px;
+             margin-bottom: 10px;
+        }
+        .progress-label { font-size: 0.8em; color: var(--text-muted); text-align: left; margin-bottom: 5px; display: block; text-transform: uppercase; }
+        /* Hide original linear progress bar for current phase */
+        #currentProgressContainer { display: none; }
+
+        progress { width: 100%; height: 10px; appearance: none; border: none; border-radius: var(--border-radius); overflow: hidden; background-color: #e9ecef; }
+        progress::-webkit-progress-bar { background-color: #e9ecef; border-radius: var(--border-radius); }
+        progress::-webkit-progress-value { background-color: var(--info-color); border-radius: var(--border-radius); transition: width 0.1s linear; }
+        progress::-moz-progress-bar { background-color: var(--info-color); border-radius: var(--border-radius); transition: width 0.1s linear; }
+        #overallProgress::-webkit-progress-value { background-color: var(--primary-color); } /* Overall progress is teal */
+        #overallProgress::-moz-progress-bar { background-color: var(--primary-color); }
+
+        /* --- Buttons --- */
+        .controls, .save-load-controls, .setup-actions, .secondary-controls {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        .secondary-controls {
+            margin-top: 10px;
+        }
+        .controls button, .save-load-controls button, .setup-actions button, .exercise-controls button, .btn-secondary {
+            padding: 10px 15px;
+            font-size: 15px;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            color: white;
+            line-height: 1.4;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .exercise-controls button { padding: 8px 12px; font-size: 0.9em; }
+
+        .controls button:hover:not(:disabled), .save-load-controls button:hover:not(:disabled),
+        .setup-actions button:hover:not(:disabled), .exercise-controls button:hover:not(:disabled),
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: var(--box-shadow-hover);
+        }
+        .controls button:active:not(:disabled), .save-load-controls button:active:not(:disabled),
+        .setup-actions button:active:not(:disabled), .exercise-controls button:active:not(:disabled),
+        .btn-secondary:active:not(:disabled) {
+            transform: translateY(0px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .btn-secondary { background-color: var(--secondary-color); }
+        .btn-secondary:hover:not(:disabled) { background-color: var(--secondary-hover); }
+        .btn-secondary.muted { background-color: var(--danger-color); }
+        .btn-secondary.muted:hover:not(:disabled) { background-color: var(--danger-hover); }
+        #goToWorkoutButton, #startButton, .btn-add-exercise { background-color: var(--primary-color); }
+        #goToWorkoutButton:hover:not(:disabled), #startButton:hover:not(:disabled), .btn-add-exercise:hover:not(:disabled) { background-color: var(--primary-hover); }
+        #pauseButton { background-color: var(--warning-color); }
+        #pauseButton:hover:not(:disabled) { background-color: var(--warning-hover); }
+        #resetButton, #deleteRoutineButton, .btn-remove-exercise { background-color: var(--danger-color); }
+        #resetButton:hover:not(:disabled), #deleteRoutineButton:hover:not(:disabled), .btn-remove-exercise:hover:not(:disabled) { background-color: var(--danger-hover); }
+        #skipButton, #loadRoutineButton { background-color: var(--info-color); }
+        #skipButton:hover:not(:disabled), #loadRoutineButton:hover:not(:disabled) { background-color: var(--info-hover); }
+        #saveRoutineButton { background-color: var(--primary-color); }
+        #saveRoutineButton:hover:not(:disabled) { background-color: var(--primary-hover); }
+         #wakeLockButton.wakelock-active {
+             background-color: var(--info-color);
+             border: 1px solid var(--info-hover);
+         }
+        button:disabled { opacity: 0.6; cursor: not-allowed !important; box-shadow: none; transform: none; }
+
+        /* --- History Section --- */
+        #historyList {
+            list-style: none; padding: 0; text-align: left;
+            max-height: 160px;
+            overflow-y: auto; border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: var(--border-radius); background-color: var(--body-bg);
+        }
+        #historyList li { background-color: var(--container-bg); padding: 10px 15px; border-bottom: 1px solid var(--border-color); margin-bottom: 8px; border-radius: 4px; font-size: 0.9em; word-break: break-word; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         #historyList li:last-child { border-bottom: none; margin-bottom: 0; }
-        #historyList strong { display: block; margin-bottom: 3px; font-size: 0.9em; color: #495057;}
-        #historyList .history-details { font-size: 0.9em; color: #6c757d; }
+        #historyList strong { display: block; margin-bottom: 4px; font-size: 0.95em; font-weight: 500; color: var(--text-color); }
+        #historyList .history-details { font-size: 0.9em; color: var(--text-muted); }
 
         .hidden { display: none !important; }
 
-        /* Style for loaded routine info (Giữ nguyên) */
-        #loadedRoutineInfo { margin-top: 20px; padding: 10px; background-color: #e9f7ef; border: 1px solid #bce8c8; border-radius: 4px; color: #285b38; font-size: 0.95em; }
-        #loadedRoutineInfo strong { font-weight: bold; }
-        #clearAndShowInputButton { margin-top: 0; /* Reset margin if needed */ }
+        /* --- Loaded Routine Info & Time Preview --- */
+        #loadedRoutineInfo { margin-top: 20px; padding: 12px 15px; background-color: #d1e7dd; border: 1px solid #badbcc; border-radius: var(--border-radius); color: #0f5132; font-size: 1em; } #loadedRoutineInfo strong { font-weight: 700; } #clearAndShowInputButton { margin-top: 0; }
+        #setupTimePreviewContainer { margin: 20px 0 10px 0; font-size: 1em; color: var(--text-muted); text-align: center; padding: 10px; background-color: var(--body-bg); border-radius: var(--border-radius); }
+        #setupTimePreview { font-weight: 700; color: var(--text-color); font-size: 1.1em; }
+
+        /* --- Settings Section (NEW) --- */
+        #settingsSection {
+             margin-top: 30px;
+             padding-top: 20px;
+             border-top: 1px solid var(--border-color);
+             text-align: left;
+        }
+        #settingsSection h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center; /* Center the settings title */
+        }
+        .settings-group {
+            margin-bottom: 15px;
+        }
+        .settings-group label {
+             display: inline-block; /* Align label and select */
+             width: 150px; /* Fixed width for alignment */
+             margin-right: 10px;
+             font-weight: 500;
+             font-size: 0.9em;
+             color: var(--text-muted);
+        }
+        .settings-group select {
+             width: calc(100% - 170px); /* Adjust width to fill remaining space */
+             display: inline-block;
+             /* Inherit styles from .input-group select */
+        }
+
+
+        /* --- Phase Transition Effect --- */
+        @keyframes phaseTransitionFlash { 0% { background-color: rgba(32, 201, 151, 0); } 50% { background-color: rgba(32, 201, 151, 0.25); } /* Teal flash */ 100% { background-color: rgba(32, 201, 151, 0); } }
+        .display-area.phase-flash-effect { animation: phaseTransitionFlash 0.4s ease-out forwards; }
+
+        /* --- Completion Animation (NEW) --- */
+        @keyframes completionAnimation {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.15); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .workout-complete-animation {
+            animation: completionAnimation 0.8s ease-in-out;
+            /* Apply to the status display when complete */
+        }
+
         /* ===== CSS END ===== */
     </style>
 </head>
@@ -154,51 +421,53 @@
                 <label for="savedRoutinesSelect">Danh sách cấu hình:</label>
                 <select id="savedRoutinesSelect">
                     <option value="">-- Chọn hoặc Nhập mới --</option>
-                </select>
+                    </select>
             </div>
             <div class="save-load-controls">
                 <button id="loadRoutineButton" disabled>Tải cấu hình</button>
                 <button id="deleteRoutineButton" disabled>Xóa cấu hình đã chọn</button>
                 <button id="clearAndShowInputButton" class="btn-secondary">Nhập cấu hình mới</button>
             </div>
+            <p id="loadedRoutineInfo" class="hidden"></p> <div id="newWorkoutParamsSection">
+                <h3 style="border-top: 1px solid var(--border-color); padding-top: 25px;">2. Nhập thông số mới</h3>
 
-             <p id="loadedRoutineInfo" class="hidden"></p>
-
-
-            <div id="newWorkoutParamsSection">
-                <h3 style="border-top: 1px solid #eee; padding-top: 20px;">2. Nhập thông số mới</h3>
                 <div class="input-group">
-                     <label for="routineNameInput">Tên cấu hình (để lưu):</label>
-                     <input type="text" id="routineNameInput" placeholder="VD: Bài tập buổi sáng">
+                    <label for="routineNameInput">Tên cấu hình (để lưu):</label>
+                    <input type="text" id="routineNameInput" placeholder="VD: Bài tập buổi sáng">
                 </div>
+
                 <div class="mode-selection">
-                     <strong>Chế độ nhập bài tập:</strong><br>
-                     <label><input type="radio" name="setupMode" value="simple" checked> Đơn giản</label>
-                     <label><input type="radio" name="setupMode" value="advanced"> Nâng cao</label>
+                    <strong>Chế độ nhập bài tập:</strong><br>
+                    <label><input type="radio" name="setupMode" value="simple" checked> Đơn giản</label>
+                    <label><input type="radio" name="setupMode" value="advanced"> Nâng cao</label>
                 </div>
+
                 <div id="simpleSetupOptions" class="setup-options active">
                     <h4>Thông số chế độ Đơn giản</h4>
-                     <div class="input-group">
-                         <label for="simpleTotalExercisesInput">Tổng số bài tập:</label>
-                         <input type="number" id="simpleTotalExercisesInput" min="1" value="5" placeholder="VD: 5">
-                     </div>
-                     <div class="input-group">
-                         <label for="simpleExerciseDurationInput">Thời gian mỗi bài (giây):</label>
-                         <input type="number" id="simpleExerciseDurationInput" min="1" value="45" placeholder="VD: 45">
-                     </div>
+                    <div class="input-group">
+                        <label for="simpleTotalExercisesInput">Tổng số bài tập:</label>
+                        <input type="number" id="simpleTotalExercisesInput" min="1" value="5" placeholder="VD: 5">
+                    </div>
+                    <div class="input-group">
+                        <label for="simpleExerciseDurationInput">Thời gian mỗi bài (giây):</label>
+                        <input type="number" id="simpleExerciseDurationInput" min="1" value="45" placeholder="VD: 45">
+                    </div>
                 </div>
+
                 <div id="advancedSetupOptions" class="setup-options">
                     <h4>Thông số chế độ Nâng cao</h4>
-                     <div class="input-group">
-                         <label>Danh sách bài tập (Tên và Thời gian):</label>
-                         <div id="exerciseListContainer"></div>
-                         <div class="exercise-controls">
-                              <button id="addExerciseButton" class="btn-add-exercise">Thêm Bài tập</button>
-                              <button id="removeLastExerciseButton" class="btn-remove-exercise">Xóa Bài Cuối</button>
-                         </div>
-                     </div>
+                    <div class="input-group">
+                        <label>Danh sách bài tập (Tên và Thời gian):</label>
+                        <div id="exerciseListContainer">
+                            </div>
+                        <div class="exercise-controls">
+                            <button id="addExerciseButton" class="btn-add-exercise">Thêm Bài tập</button>
+                            <button id="removeLastExerciseButton" class="btn-remove-exercise">Xóa Bài Cuối</button>
+                        </div>
+                    </div>
                 </div>
-                <h4 style="margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 15px;">Tùy chọn chung</h4>
+
+                <h4 style="margin-top: 30px;">Tùy chọn chung</h4>
                 <div class="input-group">
                     <label for="restDurationInput">Thời gian nghỉ sau mỗi bài (giây):</label>
                     <input type="number" id="restDurationInput" min="0" value="15" placeholder="VD: 15">
@@ -219,181 +488,1129 @@
                     <label for="cooldownDurationInput">Thời gian giãn cơ (giây, tùy chọn):</label>
                     <input type="number" id="cooldownDurationInput" min="0" value="0" placeholder="VD: 180">
                 </div>
-                 <div class="save-load-controls" style="margin-top: 25px;">
-                     <button id="saveRoutineButton">Lưu cấu hình này</button>
+
+                <div id="setupTimePreviewContainer">
+                    <strong>Thời gian ước tính:</strong> <span id="setupTimePreview">--:--</span>
+                </div>
+
+                <div class="save-load-controls" style="margin-top: 25px;">
+                    <button id="saveRoutineButton">Lưu cấu hình này</button>
+                </div>
+            </div> <div id="settingsSection">
+                 <h3>Cài đặt Âm thanh & Khác</h3>
+                 <div class="settings-group">
+                     <label for="soundPhaseEndSelect">Âm thanh kết thúc pha:</label>
+                     <select id="soundPhaseEndSelect">
+                         <option value="bell">Tiếng chuông (Mặc định)</option>
+                         <option value="beep">Tiếng bíp</option>
+                         <option value="ding">Tiếng Ding</option>
+                         <option value="none">Không có</option>
+                     </select>
                  </div>
-            </div>
+                 <div class="settings-group">
+                     <label for="soundWarningSelect">Âm thanh cảnh báo:</label>
+                     <select id="soundWarningSelect">
+                          <option value="beep">Tiếng bíp (Mặc định)</option>
+                         <option value="bell">Tiếng chuông</option>
+                          <option value="ding">Tiếng Ding</option>
+                         <option value="none">Không có</option>
+                     </select>
+                 </div>
+                 <div class="settings-group">
+                     <label for="soundCompleteSelect">Âm thanh hoàn thành:</label>
+                     <select id="soundCompleteSelect">
+                         <option value="ding">Tiếng Ding (Mặc định)</option>
+                         <option value="bell">Tiếng chuông</option>
+                         <option value="beep">Tiếng bíp</option>
+                         <option value="none">Không có</option>
+                     </select>
+                 </div>
+                 </div>
 
-
-            <div class="setup-actions" style="border-top: 1px solid #ccc; padding-top: 20px; margin-top: 25px;">
+            <div class="setup-actions" style="border-top: 1px solid var(--border-color); padding-top: 25px; margin-top: 30px;">
                 <button id="goToWorkoutButton">Chuẩn bị Tập &rarr;</button>
             </div>
-        </div>
+        </div> <div id="workoutPage" class="page">
+             <h2>Quá trình Tập luyện</h2>
 
-        <div id="workoutPage" class="page">
-              <h2>Quá trình Tập luyện</h2>
-              <div class="display-area">
-                  <div class="workout-info"> <p>Tổng Ước tính: <span id="estimatedTimeDisplay">--:--</span></p> <p>Đã qua: <span id="elapsedTimeDisplay">00:00</span></p> <p>Vòng: <span id="roundDisplay">--/--</span></p> </div>
-                   <p id="statusDisplay" class="status">Đang tải...</p> <h3 id="exerciseNameDisplay"></h3>
-                  <div id="timerDisplay" class="timer">0</div> <div class="progress-container"> <label for="currentProgress" class="progress-label">Tiến trình Pha Hiện tại:</label> <progress id="currentProgress" value="0" max="100"></progress> </div>
-                  <div class="progress-container"> <label for="overallProgress" class="progress-label">Tiến trình Tổng thể:</label> <progress id="overallProgress" value="0" max="100"></progress> </div>
-              </div>
-              <div class="controls"> <button id="startButton">Bắt đầu Tập</button> <button id="pauseButton" class="hidden">Tạm dừng</button> <button id="resetButton" disabled>Dừng & Đặt lại</button> <button id="skipButton" class="hidden">Bỏ qua Pha</button> </div>
-              <div class="controls secondary-controls"> <button id="muteButton" class="btn-secondary">Tắt Âm</button> <button id="backToSetupButton" class="hidden btn-secondary">Quay lại Cài đặt</button> </div>
-              <h2>Lịch sử tập luyện</h2> <ul id="historyList"> <li>Chưa có lịch sử nào.</li> </ul>
-         </div>
+             <div class="display-area">
+                 <div class="workout-info">
+                     <p>Tổng Ước tính: <span id="estimatedTimeDisplay">--:--</span></p>
+                     <p>Đã qua: <span id="elapsedTimeDisplay">00:00</span></p>
+                     <p>Vòng: <span id="roundDisplay">--/--</span></p>
+                 </div>
 
-        <audio id="bellSound" src="https://cdn.freesound.org/previews/263/263131_2064400-lq.mp3" preload="auto"></audio>
+                 <p id="statusDisplay" class="status">Đang tải...</p>
+                  <h3 id="exerciseNameDisplay"></h3>
 
-    </div>
+                 <div class="timer-progress-container">
+                     <svg id="circularProgressSVG" class="circular-progress" viewBox="0 0 100 100">
+                         <circle class="progress-background" cx="50" cy="50" r="45"></circle>
+                         <circle id="currentProgressCircle" class="progress-bar" cx="50" cy="50" r="45"
+                                 stroke-dasharray="283" stroke-dashoffset="283"></circle> </svg>
+                     <div id="timerDisplay" class="timer">0</div>
+                 </div>
 
-    <script>
-        // ===== JAVASCRIPT START =====
+                 <div class="progress-container" id="overallProgressContainer">
+                     <label for="overallProgress" class="progress-label">Tiến trình Tổng thể:</label>
+                     <progress id="overallProgress" value="0" max="100"></progress>
+                 </div>
+
+                 <div class="progress-container hidden" id="currentProgressContainer">
+                     <label for="currentProgress" class="progress-label">Tiến trình Pha Hiện tại:</label>
+                     <progress id="currentProgress" value="0" max="100"></progress>
+                 </div>
+
+             </div> <div class="controls">
+                <button id="startButton">Bắt đầu Tập</button>
+                <button id="pauseButton" class="hidden">Tạm dừng</button>
+                <button id="resetButton" disabled>Dừng & Đặt lại</button>
+                <button id="skipButton" class="hidden">Bỏ qua Pha</button>
+            </div>
+
+            <div class="controls secondary-controls">
+                <button id="muteButton" class="btn-secondary">Tắt Âm</button>
+                <button id="wakeLockButton" class="btn-secondary" disabled title="Giữ màn hình không bị tắt khi tập (yêu cầu HTTPS)">Giữ màn hình sáng</button>
+                <button id="backToSetupButton" class="hidden btn-secondary">Quay lại Cài đặt</button>
+            </div>
+
+            <h2>Lịch sử tập luyện</h2>
+            <ul id="historyList">
+                <li>Chưa có lịch sử nào.</li>
+                </ul>
+        </div> <audio id="bellSound" src="https://cdn.freesound.org/previews/263/263131_2064400-lq.mp3" preload="auto"></audio>
+        <audio id="beepSound" src="https://cdn.freesound.org/previews/80/80921_10287-lq.mp3" preload="auto"></audio> <audio id="dingSound" src="https://cdn.freesound.org/previews/518/518367_1619193-lq.mp3" preload="auto"></audio> </div> <script>
+        // ===== JAVASCRIPT =====
         document.addEventListener('DOMContentLoaded', () => {
-            console.log("Initializing Flexible Workout Timer v2 - Final");
+            console.log("Initializing Flexible Workout Timer v6 - Completion Animation & Larger Timer");
 
-            // --- DOM Elements (Giữ nguyên) ---
-            const setupPage = document.getElementById('setupPage'); const workoutPage = document.getElementById('workoutPage'); const newWorkoutParamsSection = document.getElementById('newWorkoutParamsSection'); const loadedRoutineInfo = document.getElementById('loadedRoutineInfo'); const routineNameInput = document.getElementById('routineNameInput'); const setupModeRadios = document.querySelectorAll('input[name="setupMode"]'); const simpleSetupOptions = document.getElementById('simpleSetupOptions'); const advancedSetupOptions = document.getElementById('advancedSetupOptions'); const simpleTotalExercisesInput = document.getElementById('simpleTotalExercisesInput'); const simpleExerciseDurationInput = document.getElementById('simpleExerciseDurationInput'); const exerciseListContainer = document.getElementById('exerciseListContainer'); const addExerciseButton = document.getElementById('addExerciseButton'); const removeLastExerciseButton = document.getElementById('removeLastExerciseButton'); const restDurationInput = document.getElementById('restDurationInput'); const totalRoundsInput = document.getElementById('totalRoundsInput'); const restBetweenRoundsInput = document.getElementById('restBetweenRoundsInput'); const warmupDurationInput = document.getElementById('warmupDurationInput'); const cooldownDurationInput = document.getElementById('cooldownDurationInput'); const savedRoutinesSelect = document.getElementById('savedRoutinesSelect'); const saveRoutineButton = document.getElementById('saveRoutineButton'); const loadRoutineButton = document.getElementById('loadRoutineButton'); const deleteRoutineButton = document.getElementById('deleteRoutineButton'); const goToWorkoutButton = document.getElementById('goToWorkoutButton'); const clearAndShowInputButton = document.getElementById('clearAndShowInputButton'); const statusDisplay = document.getElementById('statusDisplay'); const exerciseNameDisplay = document.getElementById('exerciseNameDisplay'); const timerDisplay = document.getElementById('timerDisplay'); const currentProgress = document.getElementById('currentProgress'); const overallProgress = document.getElementById('overallProgress'); const estimatedTimeDisplay = document.getElementById('estimatedTimeDisplay'); const elapsedTimeDisplay = document.getElementById('elapsedTimeDisplay'); const roundDisplay = document.getElementById('roundDisplay'); const startButton = document.getElementById('startButton'); const pauseButton = document.getElementById('pauseButton'); const resetButton = document.getElementById('resetButton'); const skipButton = document.getElementById('skipButton'); const muteButton = document.getElementById('muteButton'); const backToSetupButton = document.getElementById('backToSetupButton'); const historyList = document.getElementById('historyList'); const bellSound = document.getElementById('bellSound');
+            // --- DOM Elements ---
+            // Setup Page Elements
+            const setupPage = document.getElementById('setupPage');
+            const workoutPage = document.getElementById('workoutPage');
+            const newWorkoutParamsSection = document.getElementById('newWorkoutParamsSection');
+            const loadedRoutineInfo = document.getElementById('loadedRoutineInfo');
+            const routineNameInput = document.getElementById('routineNameInput');
+            const setupModeRadios = document.querySelectorAll('input[name="setupMode"]');
+            const simpleSetupOptions = document.getElementById('simpleSetupOptions');
+            const advancedSetupOptions = document.getElementById('advancedSetupOptions');
+            const simpleTotalExercisesInput = document.getElementById('simpleTotalExercisesInput');
+            const simpleExerciseDurationInput = document.getElementById('simpleExerciseDurationInput');
+            const exerciseListContainer = document.getElementById('exerciseListContainer');
+            const addExerciseButton = document.getElementById('addExerciseButton');
+            const removeLastExerciseButton = document.getElementById('removeLastExerciseButton');
+            const restDurationInput = document.getElementById('restDurationInput');
+            const totalRoundsInput = document.getElementById('totalRoundsInput');
+            const restBetweenRoundsInput = document.getElementById('restBetweenRoundsInput');
+            const warmupDurationInput = document.getElementById('warmupDurationInput');
+            const cooldownDurationInput = document.getElementById('cooldownDurationInput');
+            const savedRoutinesSelect = document.getElementById('savedRoutinesSelect');
+            const saveRoutineButton = document.getElementById('saveRoutineButton');
+            const loadRoutineButton = document.getElementById('loadRoutineButton');
+            const deleteRoutineButton = document.getElementById('deleteRoutineButton');
+            const goToWorkoutButton = document.getElementById('goToWorkoutButton');
+            const clearAndShowInputButton = document.getElementById('clearAndShowInputButton');
+            const setupTimePreview = document.getElementById('setupTimePreview');
+            const displayArea = workoutPage.querySelector('.display-area');
+            const timerProgressContainer = workoutPage.querySelector('.timer-progress-container'); // Get timer container (NEW)
 
-            // --- State Variables (Giữ nguyên) ---
-            let workoutConfig = { name: '', mode: 'simple', warmupDuration: 0, exercises: [], restDuration: 0, totalRounds: 1, restBetweenRoundsDuration: 0, cooldownDuration: 0, totalWorkoutTime: 0 }; let loadedRoutineData = null; let currentPhase = 'idle'; let currentExerciseIndex = -1; let currentRound = 1; let currentTimeRemaining = 0; let currentPhaseTotalDuration = 0; let timerIntervalId = null; let isPaused = false; let totalElapsedTime = 0; let workoutHistory = []; let savedRoutines = []; let settings = { muted: false };
+            // Settings Elements
+            const soundPhaseEndSelect = document.getElementById('soundPhaseEndSelect');
+            const soundWarningSelect = document.getElementById('soundWarningSelect');
+            const soundCompleteSelect = document.getElementById('soundCompleteSelect');
 
-            // --- Constants (Giữ nguyên) ---
-            const HISTORY_STORAGE_KEY = 'flexWorkoutHistory_v6'; const ROUTINES_STORAGE_KEY = 'flexSavedRoutines_v6'; const SETTINGS_KEY = 'flexWorkoutSettings_v6'; const LAST_INPUTS_KEY = 'flexWorkoutLastInputs_v6'; const WARNING_THRESHOLD = 5; const READY_DURATION = 3;
+            // Workout Page Elements
+            const statusDisplay = document.getElementById('statusDisplay');
+            const exerciseNameDisplay = document.getElementById('exerciseNameDisplay');
+            const timerDisplay = document.getElementById('timerDisplay');
+            // Circular Progress
+            const currentProgressCircle = document.getElementById('currentProgressCircle');
+            const overallProgress = document.getElementById('overallProgress');
+            const estimatedTimeDisplay = document.getElementById('estimatedTimeDisplay');
+            const elapsedTimeDisplay = document.getElementById('elapsedTimeDisplay');
+            const roundDisplay = document.getElementById('roundDisplay');
+            const startButton = document.getElementById('startButton');
+            const pauseButton = document.getElementById('pauseButton');
+            const resetButton = document.getElementById('resetButton');
+            const skipButton = document.getElementById('skipButton');
+            const muteButton = document.getElementById('muteButton');
+            const backToSetupButton = document.getElementById('backToSetupButton');
+            const historyList = document.getElementById('historyList');
+            const wakeLockButton = document.getElementById('wakeLockButton');
+
+            // Audio Elements
+            const audioElements = {
+                bell: document.getElementById('bellSound'),
+                beep: document.getElementById('beepSound'),
+                ding: document.getElementById('dingSound'),
+            };
+
+
+            // --- State Variables ---
+            let workoutConfig = {
+                name: '', mode: 'simple', warmupDuration: 0, exercises: [],
+                restDuration: 0, totalRounds: 1, restBetweenRoundsDuration: 0,
+                cooldownDuration: 0, totalWorkoutTime: 0
+            };
+            let loadedRoutineData = null;
+            let currentPhase = 'idle';
+            let currentExerciseIndex = -1;
+            let currentRound = 1;
+            let currentTimeRemaining = 0;
+            let currentPhaseTotalDuration = 0;
+            let timerIntervalId = null;
+            let isPaused = false;
+            let totalElapsedTime = 0;
+            let workoutHistory = [];
+            let savedRoutines = [];
+            let settings = {
+                muted: false, soundPhaseEnd: 'bell', soundWarning: 'beep', soundComplete: 'ding'
+            };
+            let wakeLockSentinel = null;
+
+            // --- Constants ---
+            const HISTORY_STORAGE_KEY = 'flexWorkoutHistory_v9';
+            const ROUTINES_STORAGE_KEY = 'flexSavedRoutines_v9';
+            const SETTINGS_KEY = 'flexWorkoutSettings_v9';
+            const LAST_INPUTS_KEY = 'flexWorkoutLastInputs_v9';
+            const WARNING_THRESHOLD = 5;
+            const READY_DURATION = 3;
+            // Adjusted circumference for r=45, stroke-width=12 (approximate, might need fine-tuning)
+            const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * (45 - 12 / 2); // Use inner radius for calculation
+
 
             // ==============================
-            // --- HELPER FUNCTIONS (Giữ nguyên) ---
+            // --- HELPER FUNCTIONS ---
             // ==============================
-            function formatTime(totalSeconds) { if (isNaN(totalSeconds) || totalSeconds < 0) return "00:00"; const minutes = Math.floor(totalSeconds / 60); const seconds = Math.floor(totalSeconds % 60); return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`; }
-            function calculateTotalWorkoutTime(config) { if (!config || !Array.isArray(config.exercises)) return 0; let totalTime = 0; totalTime += config.warmupDuration || 0; totalTime += config.cooldownDuration || 0; if (config.exercises.length > 0 && config.totalRounds > 0) { let singleRoundTime = 0; config.exercises.forEach((ex, index) => { singleRoundTime += ex.duration || 0; if (index < config.exercises.length - 1) { singleRoundTime += config.restDuration || 0; } }); totalTime += singleRoundTime * config.totalRounds; if (config.totalRounds > 1) { totalTime += (config.restBetweenRoundsDuration || 0) * (config.totalRounds - 1); } } totalTime += READY_DURATION * (config.totalRounds > 0 ? config.totalRounds : 0); return totalTime; }
+            function formatTime(totalSeconds) {
+                if (isNaN(totalSeconds) || totalSeconds < 0) return "00:00";
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = Math.floor(totalSeconds % 60);
+                return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+
+            function calculateTotalWorkoutTime(config) {
+                if (!config || !Array.isArray(config.exercises)) return 0;
+                let totalTime = 0;
+                totalTime += config.warmupDuration || 0;
+                totalTime += config.cooldownDuration || 0;
+                if (config.exercises.length > 0 && config.totalRounds > 0) {
+                    let singleRoundTime = 0;
+                    config.exercises.forEach((ex, index) => {
+                        singleRoundTime += ex.duration || 0;
+                        if (index < config.exercises.length - 1) {
+                            singleRoundTime += config.restDuration || 0;
+                        }
+                    });
+                    totalTime += singleRoundTime * config.totalRounds;
+                    if (config.totalRounds > 1) {
+                        totalTime += (config.restBetweenRoundsDuration || 0) * (config.totalRounds - 1);
+                    }
+                     totalTime += READY_DURATION * (config.totalRounds > 0 ? config.totalRounds : 0);
+                }
+                return totalTime;
+            }
 
             // ==============================
-            // --- PAGE NAVIGATION & SOUND (Giữ nguyên) ---
+            // --- PAGE NAVIGATION & SOUND ---
             // ==============================
-            function showPage(pageId) { console.log(`Switching to page: ${pageId}`); document.querySelectorAll('.page').forEach(page => page?.classList.remove('active')); const activePage = document.getElementById(pageId); if (activePage) activePage.classList.add('active'); else console.error(`Page element not found: ${pageId}`); }
-            function loadSettings() { console.log("Loading settings..."); try { const savedSettings = localStorage.getItem(SETTINGS_KEY); if (savedSettings) { const parsed = JSON.parse(savedSettings); if (typeof parsed.muted === 'boolean') settings.muted = parsed.muted; } } catch (e) { console.error("Error loading settings:", e); } applyMuteState(); }
-            function saveSettings() { try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); console.log("Settings saved:", settings); } catch (e) { console.error("Error saving settings:", e); } }
-            function applyMuteState() { if (!muteButton || !bellSound) return; bellSound.muted = settings.muted; muteButton.textContent = settings.muted ? 'Bật Âm' : 'Tắt Âm'; muteButton.classList.toggle('muted', settings.muted); }
-            function toggleMute() { settings.muted = !settings.muted; applyMuteState(); saveSettings(); }
-            function playBellSound() { if (bellSound && !bellSound.muted) { bellSound.currentTime = 0; bellSound.play().catch(error => console.warn("Audio play error:", error)); } }
+            function showPage(pageId) {
+                console.log(`Switching to page: ${pageId}`);
+                document.querySelectorAll('.page').forEach(page => page?.classList.remove('active'));
+                const activePage = document.getElementById(pageId);
+                if (activePage) activePage.classList.add('active');
+                else console.error(`Page element not found: ${pageId}`);
+            }
+
+            function loadSettings() {
+                console.log("Loading settings...");
+                try {
+                    const savedSettings = localStorage.getItem(SETTINGS_KEY);
+                    if (savedSettings) {
+                        const parsed = JSON.parse(savedSettings);
+                        if (typeof parsed.muted === 'boolean') settings.muted = parsed.muted;
+                        if (typeof parsed.soundPhaseEnd === 'string') settings.soundPhaseEnd = parsed.soundPhaseEnd;
+                        if (typeof parsed.soundWarning === 'string') settings.soundWarning = parsed.soundWarning;
+                        if (typeof parsed.soundComplete === 'string') settings.soundComplete = parsed.soundComplete;
+                    }
+                } catch (e) { console.error("Error loading settings:", e); }
+                applyMuteState();
+                if (soundPhaseEndSelect) soundPhaseEndSelect.value = settings.soundPhaseEnd;
+                if (soundWarningSelect) soundWarningSelect.value = settings.soundWarning;
+                if (soundCompleteSelect) soundCompleteSelect.value = settings.soundComplete;
+            }
+
+            function saveSettings() {
+                if (soundPhaseEndSelect) settings.soundPhaseEnd = soundPhaseEndSelect.value;
+                if (soundWarningSelect) settings.soundWarning = soundWarningSelect.value;
+                if (soundCompleteSelect) settings.soundComplete = soundCompleteSelect.value;
+                try {
+                    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+                    console.log("Settings saved:", settings);
+                } catch (e) { console.error("Error saving settings:", e); }
+            }
+
+            function applyMuteState() {
+                if (!muteButton) return;
+                const isMuted = settings.muted;
+                muteButton.textContent = isMuted ? 'Bật Âm' : 'Tắt Âm';
+                muteButton.classList.toggle('muted', isMuted);
+                Object.values(audioElements).forEach(audio => {
+                    if (audio) audio.muted = isMuted;
+                });
+            }
+
+            function toggleMute() {
+                settings.muted = !settings.muted;
+                applyMuteState();
+                // Save settings immediately when mute is toggled
+                saveSettings();
+            }
+
+            function playSound(eventType) {
+                if (settings.muted) return;
+                let soundKey;
+                switch (eventType) {
+                    case 'phaseEnd': soundKey = settings.soundPhaseEnd; break;
+                    case 'warning': soundKey = settings.soundWarning; break;
+                    case 'complete': soundKey = settings.soundComplete; break;
+                    default: console.warn("Unknown sound event type:", eventType); return;
+                }
+                if (soundKey === 'none') return;
+                const audioElement = audioElements[soundKey];
+                if (audioElement) {
+                    audioElement.currentTime = 0;
+                    audioElement.play().catch(error => console.warn(`Audio play error (${soundKey}):`, error));
+                } else { console.warn(`Audio element not found for key: ${soundKey}`); }
+            }
+
 
             // ==============================
-            // --- WORKOUT HISTORY (Giữ nguyên) ---
+            // --- WORKOUT HISTORY ---
             // ==============================
-            function loadHistory() { console.log("Loading history..."); try { const savedHistory = localStorage.getItem(HISTORY_STORAGE_KEY); if (savedHistory) { workoutHistory = JSON.parse(savedHistory); if (!Array.isArray(workoutHistory)) workoutHistory = []; } else workoutHistory = []; } catch (e) { console.error("Error loading history:", e); workoutHistory = []; } displayHistory(); }
-            function saveHistory() { try { localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(workoutHistory)); } catch (e) { console.error("Error saving history:", e); } }
-            function displayHistory() { if (!historyList) return; historyList.innerHTML = ''; if (workoutHistory.length === 0) { historyList.innerHTML = '<li>Chưa có lịch sử nào.</li>'; return; } for (let i = workoutHistory.length - 1; i >= 0; i--) { const entry = workoutHistory[i]; if (!entry?.timestamp || !entry.config || !Array.isArray(entry.config.exercises)) continue; const li = document.createElement('li'); const date = new Date(entry.timestamp); const formattedDate = !isNaN(date) ? date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN') : 'Ngày lỗi'; let details = `"${entry.config.name || 'Không tên'}" (${entry.config.mode === 'simple' ? 'Đơn giản' : 'Nâng cao'})`; if(entry.config.warmupDuration > 0) details += ` | W:${entry.config.warmupDuration}s`; details += ` | ${entry.config.exercises.length} bài x ${entry.config.totalRounds || 1} vòng`; details += ` (${entry.config.restDuration}s nghỉ)`; if(entry.config.totalRounds > 1 && entry.config.restBetweenRoundsDuration > 0) details += ` (${entry.config.restBetweenRoundsDuration}s nghỉ vòng)`; if(entry.config.cooldownDuration > 0) details += ` | C:${entry.config.cooldownDuration}s`; const totalTime = calculateTotalWorkoutTime(entry.config); li.innerHTML = `<strong>${formattedDate}</strong><div class="history-details">${details} | Tổng TG: ${formatTime(totalTime)}</div>`; historyList.appendChild(li); } }
-            function saveHistoryEntry() { if (!workoutConfig || workoutConfig.exercises.length === 0) return; console.log("Saving history entry..."); const configForHistory = JSON.parse(JSON.stringify(workoutConfig)); const now = new Date(); workoutHistory.push({ timestamp: now.toISOString(), config: configForHistory }); if(workoutHistory.length > 50) { workoutHistory.shift(); } saveHistory(); displayHistory(); }
+            // (No changes needed in history functions)
+            function loadHistory() {
+                console.log("Loading history...");
+                try {
+                    const savedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
+                    if (savedHistory) {
+                        workoutHistory = JSON.parse(savedHistory);
+                        if (!Array.isArray(workoutHistory)) workoutHistory = [];
+                    } else workoutHistory = [];
+                } catch (e) { console.error("Error loading history:", e); workoutHistory = []; }
+                displayHistory();
+            }
+            function saveHistory() {
+                try { localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(workoutHistory)); }
+                catch (e) { console.error("Error saving history:", e); }
+            }
+            function displayHistory() {
+                if (!historyList) return;
+                historyList.innerHTML = '';
+                if (workoutHistory.length === 0) {
+                    historyList.innerHTML = '<li>Chưa có lịch sử nào.</li>'; return;
+                }
+                for (let i = workoutHistory.length - 1; i >= 0; i--) {
+                    const entry = workoutHistory[i];
+                    if (!entry?.timestamp || !entry.config || !Array.isArray(entry.config.exercises)) continue;
+                    const li = document.createElement('li');
+                    const date = new Date(entry.timestamp);
+                    const formattedDate = !isNaN(date) ? date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN') : 'Ngày lỗi';
+                    let details = `"${entry.config.name || 'Không tên'}" (${entry.config.mode === 'simple' ? 'Đơn giản' : 'Nâng cao'})`;
+                    if(entry.config.warmupDuration > 0) details += ` | W:${entry.config.warmupDuration}s`;
+                    details += ` | ${entry.config.exercises.length} bài x ${entry.config.totalRounds || 1} vòng`;
+                    details += ` (${entry.config.restDuration}s nghỉ)`;
+                    if(entry.config.totalRounds > 1 && entry.config.restBetweenRoundsDuration > 0) details += ` (${entry.config.restBetweenRoundsDuration}s nghỉ vòng)`;
+                    if(entry.config.cooldownDuration > 0) details += ` | C:${entry.config.cooldownDuration}s`;
+                    const totalTime = calculateTotalWorkoutTime(entry.config);
+                    li.innerHTML = `<strong>${formattedDate}</strong><div class="history-details">${details} | Tổng TG: ${formatTime(totalTime)}</div>`;
+                    historyList.appendChild(li);
+                }
+            }
+            function saveHistoryEntry() {
+                if (!workoutConfig || workoutConfig.exercises.length === 0) return;
+                console.log("Saving history entry...");
+                const configForHistory = JSON.parse(JSON.stringify(workoutConfig));
+                const now = new Date();
+                workoutHistory.push({ timestamp: now.toISOString(), config: configForHistory });
+                if(workoutHistory.length > 50) { workoutHistory.shift(); }
+                saveHistory();
+                displayHistory();
+            }
 
             // ==============================
-            // --- SETUP PAGE: UI VISIBILITY CONTROL (Giữ nguyên) ---
+            // --- SETUP PAGE: UI VISIBILITY & MODE ---
             // ==============================
-            function showNewInputArea() { if (newWorkoutParamsSection) newWorkoutParamsSection.classList.remove('hidden'); if (loadedRoutineInfo) loadedRoutineInfo.classList.add('hidden'); if (saveRoutineButton) saveRoutineButton.disabled = false; loadedRoutineData = null; checkRoutineSelectState(); }
-            function hideNewInputArea(routineName) { if (newWorkoutParamsSection) newWorkoutParamsSection.classList.add('hidden'); if (loadedRoutineInfo) { loadedRoutineInfo.innerHTML = `Đã tải cấu hình: <strong>${routineName || 'Không tên'}</strong>. Sẵn sàng để Chuẩn bị Tập.`; loadedRoutineInfo.classList.remove('hidden'); } if (saveRoutineButton) saveRoutineButton.disabled = true; }
+            // (No changes needed in these functions)
+            function showNewInputArea() {
+                if (newWorkoutParamsSection) newWorkoutParamsSection.classList.remove('hidden');
+                if (loadedRoutineInfo) loadedRoutineInfo.classList.add('hidden');
+                if (saveRoutineButton) saveRoutineButton.disabled = false;
+                loadedRoutineData = null;
+                checkRoutineSelectState();
+                updateSetupTimePreview();
+            }
+            function hideNewInputArea(routineName) {
+                if (newWorkoutParamsSection) newWorkoutParamsSection.classList.add('hidden');
+                if (loadedRoutineInfo) {
+                    loadedRoutineInfo.innerHTML = `Đã tải cấu hình: <strong>${routineName || 'Không tên'}</strong>. Sẵn sàng để Chuẩn bị Tập.`;
+                    loadedRoutineInfo.classList.remove('hidden');
+                }
+                if (saveRoutineButton) saveRoutineButton.disabled = true;
+                updateSetupTimePreview();
+            }
+            function switchSetupMode(mode) {
+                if (!simpleSetupOptions || !advancedSetupOptions) return;
+                console.log("Switching setup mode to:", mode);
+                if (mode === 'simple') {
+                    simpleSetupOptions.classList.add('active');
+                    advancedSetupOptions.classList.remove('active');
+                } else {
+                    simpleSetupOptions.classList.remove('active');
+                    advancedSetupOptions.classList.add('active');
+                    if (exerciseListContainer.children.length === 0) { addExerciseInput(); }
+                }
+                updateRemoveLastButtonState();
+                updateSetupTimePreview();
+            }
+            setupModeRadios.forEach(radio => {
+                radio.addEventListener('change', (event) => {
+                    switchSetupMode(event.target.value);
+                    saveLastInputs();
+                });
+            });
+            function getSelectedSetupMode() {
+                const checkedRadio = document.querySelector('input[name="setupMode"]:checked');
+                return checkedRadio ? checkedRadio.value : 'simple';
+            }
 
             // ==============================
-            // --- SETUP PAGE: MODE SWITCHING (Giữ nguyên) ---
+            // --- SETUP PAGE: ADVANCED EXERCISE LIST MGMT ---
             // ==============================
-            function switchSetupMode(mode) { if (!simpleSetupOptions || !advancedSetupOptions) return; console.log("Switching setup mode to:", mode); if (mode === 'simple') { simpleSetupOptions.classList.add('active'); advancedSetupOptions.classList.remove('active'); } else { simpleSetupOptions.classList.remove('active'); advancedSetupOptions.classList.add('active'); if (exerciseListContainer.children.length === 0) { addExerciseInput(); } } updateRemoveLastButtonState(); }
-            setupModeRadios.forEach(radio => { radio.addEventListener('change', (event) => { switchSetupMode(event.target.value); saveLastInputs(); }); });
-            function getSelectedSetupMode() { const checkedRadio = document.querySelector('input[name="setupMode"]:checked'); return checkedRadio ? checkedRadio.value : 'simple'; }
+            // (No changes needed in these functions)
+            function addExerciseInput(name = '', duration = '') {
+                if (!exerciseListContainer) return;
+                const exerciseCount = exerciseListContainer.children.length;
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('exercise-item');
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text'; nameInput.placeholder = `Tên Bài ${exerciseCount + 1}`;
+                nameInput.value = name; nameInput.dataset.type = 'name';
+                const durationInput = document.createElement('input');
+                durationInput.type = 'number'; durationInput.min = '1';
+                durationInput.placeholder = 'Giây'; durationInput.value = duration;
+                durationInput.dataset.type = 'duration';
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Xóa'; removeBtn.type = 'button';
+                removeBtn.classList.add('btn-remove-exercise');
+                removeBtn.onclick = () => {
+                    itemDiv.remove(); updateRemoveLastButtonState();
+                    saveLastInputs(); updateSetupTimePreview();
+                };
+                itemDiv.appendChild(nameInput); itemDiv.appendChild(durationInput);
+                itemDiv.appendChild(removeBtn); exerciseListContainer.appendChild(itemDiv);
+                updateRemoveLastButtonState(); updateSetupTimePreview();
+            }
+            function removeLastExerciseInput() {
+                if (exerciseListContainer && exerciseListContainer.lastElementChild) {
+                    exerciseListContainer.lastElementChild.remove();
+                }
+                updateRemoveLastButtonState(); saveLastInputs(); updateSetupTimePreview();
+            }
+            function updateRemoveLastButtonState() {
+                if(removeLastExerciseButton && exerciseListContainer) {
+                    removeLastExerciseButton.disabled = exerciseListContainer.children.length === 0;
+                }
+            }
+            function getExercisesFromDOM() {
+                const exercises = [];
+                if (exerciseListContainer) {
+                    const items = exerciseListContainer.querySelectorAll('.exercise-item');
+                    items.forEach(item => {
+                        const nameInput = item.querySelector('input[data-type="name"]');
+                        const durationInput = item.querySelector('input[data-type="duration"]');
+                        const name = nameInput ? nameInput.value.trim() : '';
+                        const duration = durationInput ? parseInt(durationInput.value, 10) : 0;
+                        if (duration > 0) {
+                            exercises.push({ name: name || `Bài ${exercises.length + 1}`, duration: duration });
+                        }
+                    });
+                } return exercises;
+            }
+            function populateExercisesToDOM(exercises) {
+                if (!exerciseListContainer) return;
+                exerciseListContainer.innerHTML = '';
+                if (Array.isArray(exercises) && exercises.length > 0) {
+                    exercises.forEach(ex => { addExerciseInput(ex.name, ex.duration); });
+                } else { addExerciseInput(); }
+                updateRemoveLastButtonState();
+            }
 
             // ==============================
-            // --- SETUP PAGE: ADVANCED EXERCISE LIST MGMT (Giữ nguyên) ---
+            // --- SETUP PAGE: ROUTINE SAVE/LOAD ---
             // ==============================
-            function addExerciseInput(name = '', duration = '') { if (!exerciseListContainer) return; const exerciseCount = exerciseListContainer.children.length; const itemDiv = document.createElement('div'); itemDiv.classList.add('exercise-item'); const nameInput = document.createElement('input'); nameInput.type = 'text'; nameInput.placeholder = `Tên Bài ${exerciseCount + 1}`; nameInput.value = name; nameInput.dataset.type = 'name'; const durationInput = document.createElement('input'); durationInput.type = 'number'; durationInput.min = '1'; durationInput.placeholder = 'Giây'; durationInput.value = duration; durationInput.dataset.type = 'duration'; const removeBtn = document.createElement('button'); removeBtn.textContent = 'Xóa'; removeBtn.type = 'button'; removeBtn.classList.add('btn-remove-exercise'); removeBtn.onclick = () => { itemDiv.remove(); updateRemoveLastButtonState(); saveLastInputs(); }; itemDiv.appendChild(nameInput); itemDiv.appendChild(durationInput); itemDiv.appendChild(removeBtn); exerciseListContainer.appendChild(itemDiv); updateRemoveLastButtonState(); }
-            function removeLastExerciseInput() { if (exerciseListContainer && exerciseListContainer.lastElementChild) { exerciseListContainer.lastElementChild.remove(); } updateRemoveLastButtonState(); saveLastInputs(); }
-            function updateRemoveLastButtonState() { if(removeLastExerciseButton && exerciseListContainer) { removeLastExerciseButton.disabled = exerciseListContainer.children.length === 0; } }
-            function getExercisesFromDOM() { const exercises = []; if (exerciseListContainer) { const items = exerciseListContainer.querySelectorAll('.exercise-item'); items.forEach(item => { const nameInput = item.querySelector('input[data-type="name"]'); const durationInput = item.querySelector('input[data-type="duration"]'); const name = nameInput ? nameInput.value.trim() : ''; const duration = durationInput ? parseInt(durationInput.value, 10) : 0; if (duration > 0) { exercises.push({ name: name || `Bài ${exercises.length + 1}`, duration: duration }); } }); } return exercises; }
-            function populateExercisesToDOM(exercises) { if (!exerciseListContainer) return; exerciseListContainer.innerHTML = ''; if (Array.isArray(exercises)) { exercises.forEach(ex => { addExerciseInput(ex.name, ex.duration); }); } updateRemoveLastButtonState(); }
+            // (No changes needed in these functions)
+            function loadRoutines() {
+                console.log("Loading routines...");
+                try {
+                    const saved = localStorage.getItem(ROUTINES_STORAGE_KEY);
+                    if (saved) { savedRoutines = JSON.parse(saved); if (!Array.isArray(savedRoutines)) savedRoutines = []; }
+                    else savedRoutines = [];
+                } catch (e) { console.error("Error loading routines:", e); savedRoutines = []; }
+                populateRoutinesSelect();
+            }
+            function saveRoutines() {
+                try {
+                    savedRoutines.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                    localStorage.setItem(ROUTINES_STORAGE_KEY, JSON.stringify(savedRoutines));
+                    console.log("Routines saved.");
+                } catch (e) { console.error("Error saving routines:", e); }
+                populateRoutinesSelect();
+            }
+            function populateRoutinesSelect() {
+                if (!savedRoutinesSelect) return;
+                const currentVal = savedRoutinesSelect.value;
+                savedRoutinesSelect.innerHTML = '<option value="">-- Chọn hoặc Nhập mới --</option>';
+                savedRoutines.forEach((routine, index) => {
+                    if (routine && routine.name && Array.isArray(routine.exercises)) {
+                        const option = document.createElement('option'); option.value = routine.name;
+                        let desc = `${routine.name} (${routine.mode === 'simple' ? 'Đơn giản' : 'Nâng cao'}, ${routine.exercises.length} bài x ${routine.totalRounds || 1} vòng)`;
+                        option.textContent = desc; savedRoutinesSelect.appendChild(option);
+                    } else { console.warn("Skipping invalid routine data:", routine); }
+                });
+                savedRoutinesSelect.value = currentVal;
+                if (!savedRoutinesSelect.value) { savedRoutinesSelect.value = ""; }
+                checkRoutineSelectState();
+            }
+             function checkRoutineSelectState() {
+                 if (!loadRoutineButton || !deleteRoutineButton || !savedRoutinesSelect) return;
+                 const selectedValue = savedRoutinesSelect.value;
+                 const routineExists = selectedValue && savedRoutines.some(routine => routine.name === selectedValue);
+                 loadRoutineButton.disabled = !routineExists;
+                 deleteRoutineButton.disabled = !routineExists;
+                 if(saveRoutineButton && newWorkoutParamsSection) {
+                    saveRoutineButton.disabled = newWorkoutParamsSection.classList.contains('hidden');
+                 }
+             }
+            function handleSaveRoutine() {
+                const name = routineNameInput.value.trim();
+                const selectedMode = getSelectedSetupMode();
+                let exercises = [];
+                if (selectedMode === 'simple') {
+                    const totalEx = parseInt(simpleTotalExercisesInput.value, 10);
+                    const exDur = parseInt(simpleExerciseDurationInput.value, 10);
+                    if (isNaN(totalEx) || totalEx <= 0 || isNaN(exDur) || exDur <= 0) {
+                        alert("Chế độ Đơn giản: Vui lòng nhập Tổng số bài và Thời gian mỗi bài hợp lệ (lớn hơn 0)."); return;
+                    }
+                    for (let i = 0; i < totalEx; i++) { exercises.push({ name: `Bài ${i + 1}`, duration: exDur }); }
+                } else {
+                    exercises = getExercisesFromDOM();
+                    if (exercises.length === 0) {
+                        alert("Chế độ Nâng cao: Vui lòng thêm ít nhất một bài tập với thời gian lớn hơn 0."); return;
+                    }
+                }
+                const restDur = parseInt(restDurationInput.value, 10) || 0;
+                const rounds = parseInt(totalRoundsInput.value, 10) || 1;
+                const restBetweenRounds = parseInt(restBetweenRoundsInput.value, 10) || 0;
+                const warmup = parseInt(warmupDurationInput.value, 10) || 0;
+                const cooldown = parseInt(cooldownDurationInput.value, 10) || 0;
+                if (!name) { alert("Vui lòng nhập Tên cấu hình để lưu."); routineNameInput.focus(); return; }
+                 if (rounds <= 0) { alert("Số vòng tập phải lớn hơn 0."); totalRoundsInput.focus(); return; }
+                const newRoutine = { name: name, mode: selectedMode, warmupDuration: warmup, exercises: exercises, restDuration: restDur, totalRounds: rounds, restBetweenRoundsDuration: restBetweenRounds, cooldownDuration: cooldown };
+                const existingIndex = savedRoutines.findIndex(r => r.name.toLowerCase() === name.toLowerCase());
+                if (existingIndex !== -1) {
+                    if (confirm(`Cấu hình "${savedRoutines[existingIndex].name}" đã tồn tại. Ghi đè?`)) {
+                        savedRoutines[existingIndex] = newRoutine;
+                    } else { return; }
+                } else { savedRoutines.push(newRoutine); }
+                saveRoutines(); alert(`Đã lưu cấu hình "${name}".`);
+                savedRoutinesSelect.value = name; checkRoutineSelectState();
+            }
+            function handleLoadRoutine() {
+                const selectedName = savedRoutinesSelect.value; if (!selectedName) return;
+                const routineToLoad = savedRoutines.find(routine => routine.name === selectedName);
+                if (routineToLoad) {
+                    console.log("Loading routine into state:", routineToLoad);
+                    loadedRoutineData = JSON.parse(JSON.stringify(routineToLoad));
+                    hideNewInputArea(loadedRoutineData.name);
+                    alert(`Đã tải cấu hình "${loadedRoutineData.name}". Nhấn "Chuẩn bị Tập" để bắt đầu.`);
+                    checkRoutineSelectState(); updateSetupTimePreview();
+                } else {
+                    alert("Lỗi: Không tìm thấy cấu hình."); loadedRoutineData = null;
+                    showNewInputArea(); loadRoutines();
+                }
+            }
+            function handleDeleteRoutine() {
+                const selectedName = savedRoutinesSelect.value; if (!selectedName) return;
+                if (confirm(`Xóa vĩnh viễn cấu hình "${selectedName}"?`)) {
+                    const wasLoadedAndHidden = loadedRoutineData && loadedRoutineData.name === selectedName;
+                    savedRoutines = savedRoutines.filter(routine => routine.name !== selectedName);
+                    saveRoutines(); alert(`Đã xóa cấu hình "${selectedName}".`);
+                    savedRoutinesSelect.value = ''; loadedRoutineData = null;
+                    if(wasLoadedAndHidden) { showNewInputArea(); handleClearInputsInternal(); }
+                    checkRoutineSelectState(); updateSetupTimePreview();
+                }
+            }
 
             // ==============================
-            // --- SETUP PAGE: ROUTINE SAVE/LOAD (Giữ nguyên) ---
+            // --- SETUP PAGE: INPUTS HANDLING ---
             // ==============================
-            function loadRoutines() { console.log("Loading routines..."); try { const saved = localStorage.getItem(ROUTINES_STORAGE_KEY); if (saved) { savedRoutines = JSON.parse(saved); if (!Array.isArray(savedRoutines)) savedRoutines = []; } else savedRoutines = []; } catch (e) { console.error("Error loading routines:", e); savedRoutines = []; } populateRoutinesSelect(); }
-            function saveRoutines() { try { savedRoutines.sort((a, b) => (a.name || '').localeCompare(b.name || '')); localStorage.setItem(ROUTINES_STORAGE_KEY, JSON.stringify(savedRoutines)); console.log("Routines saved."); } catch (e) { console.error("Error saving routines:", e); } populateRoutinesSelect(); }
-            function populateRoutinesSelect() { if (!savedRoutinesSelect) return; const currentVal = savedRoutinesSelect.value; savedRoutinesSelect.innerHTML = '<option value="">-- Chọn hoặc Nhập mới --</option>'; savedRoutines.forEach((routine, index) => { if (routine && routine.name && Array.isArray(routine.exercises)) { const option = document.createElement('option'); option.value = routine.name; let desc = `${routine.name} (${routine.mode === 'simple' ? 'Đơn giản' : 'Nâng cao'}, ${routine.exercises.length} bài x ${routine.totalRounds || 1} vòng)`; option.textContent = desc; savedRoutinesSelect.appendChild(option); } else { console.warn("Skipping invalid routine data:", routine); } }); savedRoutinesSelect.value = currentVal; if (!savedRoutinesSelect.value) { savedRoutinesSelect.value = ""; } checkRoutineSelectState(); }
-            function checkRoutineSelectState() { if (!loadRoutineButton || !deleteRoutineButton || !savedRoutinesSelect) return; const selectedValue = savedRoutinesSelect.value; const routineExists = selectedValue && savedRoutines.some(routine => routine.name === selectedValue); loadRoutineButton.disabled = !routineExists; deleteRoutineButton.disabled = !routineExists; if(saveRoutineButton && newWorkoutParamsSection) { saveRoutineButton.disabled = newWorkoutParamsSection.classList.contains('hidden'); } }
-            function handleSaveRoutine() { const name = routineNameInput.value.trim(); const selectedMode = getSelectedSetupMode(); let exercises = []; if (selectedMode === 'simple') { const totalEx = parseInt(simpleTotalExercisesInput.value, 10); const exDur = parseInt(simpleExerciseDurationInput.value, 10); if (isNaN(totalEx) || totalEx <= 0 || isNaN(exDur) || exDur <= 0) { alert("Chế độ Đơn giản: Vui lòng nhập Tổng số bài và Thời gian mỗi bài hợp lệ (lớn hơn 0)."); return; } for (let i = 0; i < totalEx; i++) { exercises.push({ name: `Bài ${i + 1}`, duration: exDur }); } } else { exercises = getExercisesFromDOM(); if (exercises.length === 0) { alert("Chế độ Nâng cao: Vui lòng thêm ít nhất một bài tập với thời gian lớn hơn 0."); return; } } const restDur = parseInt(restDurationInput.value, 10) || 0; const rounds = parseInt(totalRoundsInput.value, 10) || 1; const restBetweenRounds = parseInt(restBetweenRoundsInput.value, 10) || 0; const warmup = parseInt(warmupDurationInput.value, 10) || 0; const cooldown = parseInt(cooldownDurationInput.value, 10) || 0; if (!name) { alert("Vui lòng nhập Tên cấu hình để lưu."); routineNameInput.focus(); return; } if (rounds <= 0) { alert("Số vòng tập phải lớn hơn 0."); totalRoundsInput.focus(); return; } const newRoutine = { name: name, mode: selectedMode, warmupDuration: warmup, exercises: exercises, restDuration: restDur, totalRounds: rounds, restBetweenRoundsDuration: restBetweenRounds, cooldownDuration: cooldown }; const existingIndex = savedRoutines.findIndex(r => r.name.toLowerCase() === name.toLowerCase()); if (existingIndex !== -1) { if (confirm(`Cấu hình "${savedRoutines[existingIndex].name}" đã tồn tại. Ghi đè?`)) { savedRoutines[existingIndex] = newRoutine; } else { return; } } else { savedRoutines.push(newRoutine); } saveRoutines(); alert(`Đã lưu cấu hình "${name}".`); savedRoutinesSelect.value = name; checkRoutineSelectState(); }
-            function handleLoadRoutine() { const selectedName = savedRoutinesSelect.value; if (!selectedName) return; const routineToLoad = savedRoutines.find(routine => routine.name === selectedName); if (routineToLoad) { console.log("Loading routine into state:", routineToLoad); loadedRoutineData = JSON.parse(JSON.stringify(routineToLoad)); hideNewInputArea(loadedRoutineData.name); alert(`Đã tải cấu hình "${loadedRoutineData.name}". Nhấn "Chuẩn bị Tập" để bắt đầu.`); checkRoutineSelectState(); } else { alert("Lỗi: Không tìm thấy cấu hình."); loadedRoutineData = null; showNewInputArea(); loadRoutines(); } }
-            function handleDeleteRoutine() { const selectedName = savedRoutinesSelect.value; if (!selectedName) return; if (confirm(`Xóa vĩnh viễn cấu hình "${selectedName}"?`)) { const wasLoadedAndHidden = loadedRoutineData && loadedRoutineData.name === selectedName; savedRoutines = savedRoutines.filter(routine => routine.name !== selectedName); saveRoutines(); alert(`Đã xóa cấu hình "${selectedName}".`); savedRoutinesSelect.value = ''; loadedRoutineData = null; if(wasLoadedAndHidden) { showNewInputArea(); handleClearInputsInternal(); } checkRoutineSelectState(); } }
-
-            // ==============================
-            // --- SETUP PAGE: INPUTS HANDLING (Giữ nguyên) ---
-            // ==============================
-            function handleClearInputsInternal() { console.log("Clearing input fields and resetting mode."); routineNameInput.value = ''; warmupDurationInput.value = '0'; restDurationInput.value = '15'; totalRoundsInput.value = '1'; restBetweenRoundsInput.value = '60'; cooldownDurationInput.value = '0'; simpleTotalExercisesInput.value = '5'; simpleExerciseDurationInput.value = '45'; populateExercisesToDOM([]); addExerciseInput(); document.querySelector('input[name="setupMode"][value="simple"]').checked = true; switchSetupMode('simple'); savedRoutinesSelect.value = ''; loadedRoutineData = null; updateRemoveLastButtonState(); checkRoutineSelectState(); try { localStorage.removeItem(LAST_INPUTS_KEY); } catch (e) { console.error("Error removing last inputs:", e); } }
-            function handleClearAndShowInput() { console.log("Clear and Show Input button clicked."); showNewInputArea(); handleClearInputsInternal(); saveLastInputs(); }
-            function saveLastInputs() { if (newWorkoutParamsSection && !newWorkoutParamsSection.classList.contains('hidden')) { const selectedMode = getSelectedSetupMode(); const lastInputs = { mode: selectedMode, name: routineNameInput.value, warmup: warmupDurationInput.value, simpleTotal: selectedMode === 'simple' ? simpleTotalExercisesInput.value : '', simpleDuration: selectedMode === 'simple' ? simpleExerciseDurationInput.value : '', advancedExercises: selectedMode === 'advanced' ? getExercisesFromDOM() : [], rest: restDurationInput.value, rounds: totalRoundsInput.value, roundRest: restBetweenRoundsInput.value, cooldown: cooldownDurationInput.value }; try { localStorage.setItem(LAST_INPUTS_KEY, JSON.stringify(lastInputs)); } catch(e) { console.error("Error saving last inputs:", e); } } else { console.log("Input area hidden, skipping saveLastInputs."); } }
-            function loadLastInputs() { console.log("Loading last inputs..."); let inputsLoaded = false; try { const saved = localStorage.getItem(LAST_INPUTS_KEY); if (saved) { const lastInputs = JSON.parse(saved); const loadedMode = lastInputs.mode || 'simple'; document.querySelector(`input[name="setupMode"][value="${loadedMode}"]`).checked = true; switchSetupMode(loadedMode); routineNameInput.value = lastInputs.name || ''; warmupDurationInput.value = lastInputs.warmup || 0; restDurationInput.value = lastInputs.rest || 15; totalRoundsInput.value = lastInputs.rounds || 1; restBetweenRoundsInput.value = lastInputs.roundRest || 60; cooldownDurationInput.value = lastInputs.cooldown || 0; if (loadedMode === 'simple') { simpleTotalExercisesInput.value = lastInputs.simpleTotal || 5; simpleExerciseDurationInput.value = lastInputs.simpleDuration || 45; if (exerciseListContainer.children.length === 0) addExerciseInput(); } else { populateExercisesToDOM(lastInputs.advancedExercises || []); if (exerciseListContainer.children.length === 0) addExerciseInput(); } console.log("Last inputs loaded."); inputsLoaded = true; } } catch(e) { console.error("Error loading last inputs:", e); } if (!inputsLoaded) { document.querySelector('input[name="setupMode"][value="simple"]').checked = true; switchSetupMode('simple'); if (exerciseListContainer.children.length === 0) addExerciseInput(); } showNewInputArea(); updateRemoveLastButtonState(); }
+            // (No changes needed in these functions)
+            function handleClearInputsInternal() {
+                console.log("Clearing input fields and resetting mode.");
+                routineNameInput.value = ''; warmupDurationInput.value = '0';
+                restDurationInput.value = '15'; totalRoundsInput.value = '1';
+                restBetweenRoundsInput.value = '60'; cooldownDurationInput.value = '0';
+                simpleTotalExercisesInput.value = '5'; simpleExerciseDurationInput.value = '45';
+                populateExercisesToDOM([]);
+                document.querySelector('input[name="setupMode"][value="simple"]').checked = true;
+                switchSetupMode('simple'); savedRoutinesSelect.value = ''; loadedRoutineData = null;
+                updateRemoveLastButtonState(); checkRoutineSelectState();
+                 try { localStorage.removeItem(LAST_INPUTS_KEY); }
+                 catch (e) { console.error("Error removing last inputs:", e); }
+                 updateSetupTimePreview();
+            }
+            function handleClearAndShowInput() {
+                console.log("Clear and Show Input button clicked.");
+                showNewInputArea(); handleClearInputsInternal(); saveLastInputs();
+            }
+            function saveLastInputs() {
+                if (newWorkoutParamsSection && !newWorkoutParamsSection.classList.contains('hidden')) {
+                    const selectedMode = getSelectedSetupMode();
+                    const lastInputs = {
+                        mode: selectedMode, name: routineNameInput.value,
+                        warmup: warmupDurationInput.value,
+                        simpleTotal: selectedMode === 'simple' ? simpleTotalExercisesInput.value : '',
+                        simpleDuration: selectedMode === 'simple' ? simpleExerciseDurationInput.value : '',
+                        advancedExercises: selectedMode === 'advanced' ? getExercisesFromDOM() : [],
+                        rest: restDurationInput.value, rounds: totalRoundsInput.value,
+                        roundRest: restBetweenRoundsInput.value, cooldown: cooldownDurationInput.value
+                    };
+                    try { localStorage.setItem(LAST_INPUTS_KEY, JSON.stringify(lastInputs)); }
+                    catch(e) { console.error("Error saving last inputs:", e); }
+                } else { console.log("Input area hidden, skipping saveLastInputs."); }
+            }
+            function loadLastInputs() {
+                console.log("Loading last inputs..."); let inputsLoaded = false;
+                try {
+                    const saved = localStorage.getItem(LAST_INPUTS_KEY);
+                    if (saved) {
+                        const lastInputs = JSON.parse(saved);
+                        const loadedMode = lastInputs.mode || 'simple';
+                        document.querySelector(`input[name="setupMode"][value="${loadedMode}"]`).checked = true;
+                        switchSetupMode(loadedMode);
+                        routineNameInput.value = lastInputs.name || '';
+                        warmupDurationInput.value = lastInputs.warmup || 0;
+                        restDurationInput.value = lastInputs.rest || 15;
+                        totalRoundsInput.value = lastInputs.rounds || 1;
+                        restBetweenRoundsInput.value = lastInputs.roundRest || 60;
+                        cooldownDurationInput.value = lastInputs.cooldown || 0;
+                        if (loadedMode === 'simple') {
+                            simpleTotalExercisesInput.value = lastInputs.simpleTotal || 5;
+                            simpleExerciseDurationInput.value = lastInputs.simpleDuration || 45;
+                            populateExercisesToDOM([]);
+                        } else { populateExercisesToDOM(lastInputs.advancedExercises || []); }
+                        console.log("Last inputs loaded."); inputsLoaded = true;
+                    }
+                } catch(e) { console.error("Error loading last inputs:", e); }
+                if (!inputsLoaded) {
+                    document.querySelector('input[name="setupMode"][value="simple"]').checked = true;
+                    switchSetupMode('simple'); populateExercisesToDOM([]);
+                }
+                showNewInputArea(); updateRemoveLastButtonState(); updateSetupTimePreview();
+            }
 
             // =====================================
-            // --- TRANSITION TO WORKOUT PAGE (Giữ nguyên) ---
+            // --- SETUP PAGE: TIME PREVIEW FUNCTION ---
             // =====================================
-            function prepareAndSwitchToWorkout() { console.log("Preparing for workout..."); let configSource; if (loadedRoutineData) { console.log("Using loaded routine data."); configSource = loadedRoutineData; } else { console.log("Using data from input fields."); const selectedMode = getSelectedSetupMode(); let exercises = []; if (selectedMode === 'simple') { const totalEx = parseInt(simpleTotalExercisesInput.value, 10); const exDur = parseInt(simpleExerciseDurationInput.value, 10); if (isNaN(totalEx) || totalEx <= 0 || isNaN(exDur) || exDur <= 0) { alert("Chế độ Đơn giản: Vui lòng nhập Tổng số bài và Thời gian mỗi bài hợp lệ (lớn hơn 0)."); return; } for (let i = 0; i < totalEx; i++) { exercises.push({ name: `Bài ${i + 1}`, duration: exDur }); } } else { exercises = getExercisesFromDOM(); if (exercises.length === 0) { alert("Chế độ Nâng cao: Vui lòng thêm ít nhất một bài tập với thời gian lớn hơn 0."); return; } } const name = routineNameInput.value.trim() || "Bài tập không tên"; const restDur = parseInt(restDurationInput.value, 10) || 0; const rounds = parseInt(totalRoundsInput.value, 10) || 1; const restBetweenRounds = parseInt(restBetweenRoundsInput.value, 10) || 0; const warmup = parseInt(warmupDurationInput.value, 10) || 0; const cooldown = parseInt(cooldownDurationInput.value, 10) || 0; if (rounds <= 0) { alert("Số vòng tập phải lớn hơn 0."); totalRoundsInput.focus(); return; } configSource = { name: name, mode: selectedMode, warmupDuration: warmup, exercises: exercises, restDuration: restDur, totalRounds: rounds, restBetweenRoundsDuration: (rounds > 1) ? restBetweenRounds : 0, cooldownDuration: cooldown }; } workoutConfig = { name: configSource.name, mode: configSource.mode, warmupDuration: configSource.warmupDuration || 0, exercises: configSource.exercises || [], restDuration: configSource.restDuration || 0, totalRounds: configSource.totalRounds || 1, restBetweenRoundsDuration: configSource.restBetweenRoundsDuration || 0, cooldownDuration: configSource.cooldownDuration || 0, totalWorkoutTime: 0 }; workoutConfig.totalWorkoutTime = calculateTotalWorkoutTime(workoutConfig); console.log("Final workout config:", workoutConfig); if (workoutConfig.exercises.length === 0 || (workoutConfig.totalWorkoutTime <= 0 && workoutConfig.warmupDuration <= 0 && workoutConfig.cooldownDuration <= 0)) { alert("Cấu hình không hợp lệ hoặc không có bài tập nào. Không thể bắt đầu."); return; } estimatedTimeDisplay.textContent = formatTime(workoutConfig.totalWorkoutTime); resetTimerStateForNewWorkout(); showPage('workoutPage'); }
+            // (No changes needed in this function)
+            function updateSetupTimePreview() {
+                if (!setupTimePreview) return;
+                let tempConfig = { exercises: [] };
+                if (loadedRoutineData && newWorkoutParamsSection && newWorkoutParamsSection.classList.contains('hidden')) {
+                    tempConfig = loadedRoutineData;
+                } else if (newWorkoutParamsSection && !newWorkoutParamsSection.classList.contains('hidden')) {
+                    const selectedMode = getSelectedSetupMode();
+                    if (selectedMode === 'simple') {
+                        const totalEx = parseInt(simpleTotalExercisesInput.value, 10);
+                        const exDur = parseInt(simpleExerciseDurationInput.value, 10);
+                        if (!isNaN(totalEx) && totalEx > 0 && !isNaN(exDur) && exDur > 0) {
+                            for (let i = 0; i < totalEx; i++) { tempConfig.exercises.push({ name: `Bài ${i + 1}`, duration: exDur }); }
+                        }
+                    } else { tempConfig.exercises = getExercisesFromDOM(); }
+                    tempConfig.restDuration = parseInt(restDurationInput.value, 10) || 0;
+                    tempConfig.totalRounds = parseInt(totalRoundsInput.value, 10) || 1;
+                    tempConfig.restBetweenRoundsDuration = (tempConfig.totalRounds > 1) ? (parseInt(restBetweenRoundsInput.value, 10) || 0) : 0;
+                    tempConfig.warmupDuration = parseInt(warmupDurationInput.value, 10) || 0;
+                    tempConfig.cooldownDuration = parseInt(cooldownDurationInput.value, 10) || 0;
+                } else { setupTimePreview.textContent = "--:--"; return; }
+                const totalTime = calculateTotalWorkoutTime(tempConfig);
+                if (totalTime > 0 || tempConfig.warmupDuration > 0 || tempConfig.cooldownDuration > 0 || tempConfig.exercises.length > 0) {
+                     setupTimePreview.textContent = formatTime(totalTime);
+                 } else { setupTimePreview.textContent = "--:--"; }
+            }
 
             // =====================================
-            // --- WORKOUT PAGE LOGIC (UPDATED to remove 's') ---
+            // --- TRANSITION TO WORKOUT PAGE ---
             // =====================================
-            function resetTimerStateForNewWorkout() { console.log("Resetting timer state for new workout."); clearInterval(timerIntervalId); timerIntervalId = null; currentPhase = 'idle'; currentExerciseIndex = -1; currentRound = 1; currentTimeRemaining = 0; currentPhaseTotalDuration = 0; isPaused = false; totalElapsedTime = 0; if (startButton && pauseButton && resetButton && backToSetupButton && skipButton) { startButton.textContent = 'Bắt đầu Tập'; startButton.classList.remove('hidden'); pauseButton.classList.add('hidden'); resetButton.disabled = true; skipButton.classList.add('hidden'); backToSetupButton.classList.remove('hidden'); } if(elapsedTimeDisplay) elapsedTimeDisplay.textContent = formatTime(0); if(roundDisplay) roundDisplay.textContent = `${currentRound}/${workoutConfig.totalRounds || '?'}`; if(exerciseNameDisplay) exerciseNameDisplay.textContent = ''; updateWorkoutPageDisplay(); }
+            function prepareAndSwitchToWorkout() {
+                console.log("Preparing for workout...");
+                saveSettings(); // Save sound settings before switching
 
-            // --- UPDATE: Bỏ chữ 's' khỏi timerDisplay.textContent ---
+                let configSource;
+                if (loadedRoutineData) {
+                    console.log("Using loaded routine data."); configSource = loadedRoutineData;
+                } else {
+                    console.log("Using data from input fields.");
+                    const selectedMode = getSelectedSetupMode(); let exercises = [];
+                    if (selectedMode === 'simple') {
+                        const totalEx = parseInt(simpleTotalExercisesInput.value, 10);
+                        const exDur = parseInt(simpleExerciseDurationInput.value, 10);
+                        if (isNaN(totalEx) || totalEx <= 0 || isNaN(exDur) || exDur <= 0) {
+                            alert("Chế độ Đơn giản: Vui lòng nhập Tổng số bài và Thời gian mỗi bài hợp lệ (lớn hơn 0)."); return;
+                        }
+                        for (let i = 0; i < totalEx; i++) { exercises.push({ name: `Bài ${i + 1}`, duration: exDur }); }
+                    } else {
+                        exercises = getExercisesFromDOM();
+                        if (exercises.length === 0) {
+                            alert("Chế độ Nâng cao: Vui lòng thêm ít nhất một bài tập với thời gian lớn hơn 0."); return;
+                        }
+                    }
+                    const name = routineNameInput.value.trim() || "Bài tập không tên";
+                    const restDur = parseInt(restDurationInput.value, 10) || 0;
+                    const rounds = parseInt(totalRoundsInput.value, 10) || 1;
+                    const restBetweenRounds = parseInt(restBetweenRoundsInput.value, 10) || 0;
+                    const warmup = parseInt(warmupDurationInput.value, 10) || 0;
+                    const cooldown = parseInt(cooldownDurationInput.value, 10) || 0;
+                    if (rounds <= 0) { alert("Số vòng tập phải lớn hơn 0."); totalRoundsInput.focus(); return; }
+                    configSource = { name: name, mode: selectedMode, warmupDuration: warmup, exercises: exercises, restDuration: restDur, totalRounds: rounds, restBetweenRoundsDuration: (rounds > 1) ? restBetweenRounds : 0, cooldownDuration: cooldown };
+                }
+                workoutConfig = {
+                    name: configSource.name, mode: configSource.mode,
+                    warmupDuration: configSource.warmupDuration || 0,
+                    exercises: configSource.exercises || [],
+                    restDuration: configSource.restDuration || 0,
+                    totalRounds: configSource.totalRounds || 1,
+                    restBetweenRoundsDuration: configSource.restBetweenRoundsDuration || 0,
+                    cooldownDuration: configSource.cooldownDuration || 0,
+                    totalWorkoutTime: 0
+                };
+                workoutConfig.totalWorkoutTime = calculateTotalWorkoutTime(workoutConfig);
+                console.log("Final workout config:", workoutConfig);
+                if (workoutConfig.exercises.length === 0 || (workoutConfig.totalWorkoutTime <= 0 && workoutConfig.warmupDuration <=0 && workoutConfig.cooldownDuration <=0) ) {
+                    alert("Cấu hình không hợp lệ hoặc không có bài tập nào. Không thể bắt đầu."); return;
+                }
+                estimatedTimeDisplay.textContent = formatTime(workoutConfig.totalWorkoutTime);
+                resetTimerStateForNewWorkout();
+                showPage('workoutPage');
+            }
+
+            // =====================================
+            // --- WORKOUT PAGE LOGIC ---
+            // =====================================
+
+            /** Sets the stroke-dashoffset for the circular progress bar. */
+            function setCircleProgress(percent) {
+                if (!currentProgressCircle) return;
+                const offset = CIRCLE_CIRCUMFERENCE - (percent / 100) * CIRCLE_CIRCUMFERENCE;
+                currentProgressCircle.style.strokeDashoffset = Math.max(0, Math.min(offset, CIRCLE_CIRCUMFERENCE));
+            }
+
+            /** Resets all timer-related state variables and UI elements. */
+            function resetTimerStateForNewWorkout() {
+                console.log("Resetting timer state for new workout.");
+                clearInterval(timerIntervalId); timerIntervalId = null;
+                currentPhase = 'idle'; currentExerciseIndex = -1; currentRound = 1;
+                currentTimeRemaining = 0; currentPhaseTotalDuration = 0;
+                isPaused = false; totalElapsedTime = 0;
+                releaseWakeLock();
+                if (startButton && pauseButton && resetButton && backToSetupButton && skipButton) {
+                    startButton.textContent = 'Bắt đầu Tập'; startButton.classList.remove('hidden');
+                    pauseButton.classList.add('hidden'); resetButton.disabled = true;
+                    skipButton.classList.add('hidden'); backToSetupButton.classList.remove('hidden');
+                }
+                if(elapsedTimeDisplay) elapsedTimeDisplay.textContent = formatTime(0);
+                if(roundDisplay) roundDisplay.textContent = `${currentRound}/${workoutConfig.totalRounds || '?'}`;
+                if(exerciseNameDisplay) exerciseNameDisplay.textContent = '';
+                setCircleProgress(0);
+                if(overallProgress) overallProgress.value = 0;
+                if(timerProgressContainer) timerProgressContainer.classList.remove('hidden'); // Ensure timer is visible (NEW)
+                if(statusDisplay) statusDisplay.classList.remove('workout-complete-animation'); // Remove animation class (NEW)
+                updateWorkoutPageDisplay();
+            }
+
+            /** Updates all dynamic elements on the workout page. */
             function updateWorkoutPageDisplay() {
-                 if (!timerDisplay || !statusDisplay || !currentProgress || !overallProgress || !elapsedTimeDisplay || !roundDisplay || !exerciseNameDisplay) return;
-                 const seconds = Math.max(0, currentTimeRemaining);
+                if (!timerDisplay || !statusDisplay || !currentProgressCircle || !overallProgress || !elapsedTimeDisplay || !roundDisplay || !exerciseNameDisplay || !displayArea || !timerProgressContainer) return;
 
-                 // --- Update Timer Display (Number & Color) ---
-                 // Bỏ chữ 's' ở đây:
-                 timerDisplay.textContent = `${Math.floor(seconds)}`; // Chỉ hiển thị số
+                const seconds = Math.max(0, currentTimeRemaining);
 
-                 // Manage timer color classes (giữ nguyên)
-                 timerDisplay.className = 'timer'; if (isPaused) { timerDisplay.classList.add('paused'); } else { timerDisplay.classList.add(`phase-${currentPhase}`); if (seconds > 0 && seconds <= WARNING_THRESHOLD && !['ready', 'idle', 'complete', 'warmup', 'cooldown'].includes(currentPhase)) { timerDisplay.classList.add('warning'); } }
-
-                 // --- Update Status Text & Exercise Name (giữ nguyên) ---
-                 let currentStatusText = ''; let currentExerciseName = '';
-                 if (isPaused) { currentStatusText = `Đã tạm dừng (Vòng ${currentRound}/${workoutConfig.totalRounds})`; if (currentPhase === 'exercise' && currentExerciseIndex >= 0) { currentExerciseName = workoutConfig.exercises[currentExerciseIndex]?.name || `Bài ${currentExerciseIndex + 1}`; } else if (currentPhase === 'rest') { currentExerciseName = 'Đang nghỉ'; } else if (currentPhase === 'roundRest') { currentExerciseName = 'Nghỉ giữa vòng'; } } else { switch (currentPhase) { case 'idle': currentStatusText = `Sẵn sàng bắt đầu`; break; case 'warmup': currentStatusText = `Đang khởi động`; break; case 'ready': currentStatusText = `Chuẩn bị cho Vòng ${currentRound}...`; if (currentExerciseIndex >= 0 && workoutConfig.exercises[currentExerciseIndex]) { currentExerciseName = `Bài tiếp theo: ${workoutConfig.exercises[currentExerciseIndex].name}`; } break; case 'exercise': currentStatusText = `Đang tập (Vòng ${currentRound}/${workoutConfig.totalRounds})`; if (currentExerciseIndex >= 0) { currentExerciseName = workoutConfig.exercises[currentExerciseIndex]?.name || `Bài ${currentExerciseIndex + 1}`; } break; case 'rest': currentStatusText = `Đang nghỉ (Vòng ${currentRound}/${workoutConfig.totalRounds})`; const nextExIndex = currentExerciseIndex + 1; if(nextExIndex < workoutConfig.exercises.length) { currentExerciseName = `Tiếp theo: ${workoutConfig.exercises[nextExIndex].name}`; } else { currentExerciseName = `Chuẩn bị cho vòng sau`; } break; case 'roundRest': currentStatusText = `Đang nghỉ giữa vòng (Kết thúc Vòng ${currentRound})`; currentExerciseName = `Chuẩn bị cho Vòng ${currentRound + 1}`; break; case 'cooldown': currentStatusText = `Đang giãn cơ`; break; case 'complete': currentStatusText = "Chúc mừng bạn đã hoàn thành!"; break; default: currentStatusText = "Trạng thái không xác định"; } } // Kết thúc else (!isPaused)
-
-                 // Xử lý hiển thị khi hoàn thành (vẫn giữ nguyên icon 🎉)
+                // Hide timer container and show only status on complete (NEW)
                  if (currentPhase === 'complete') {
-                    statusDisplay.textContent = "Chúc mừng bạn đã hoàn thành!";
-                     timerDisplay.textContent = "🎉"; // Giữ nguyên icon hoàn thành
-                     timerDisplay.classList.remove('warning', 'paused');
-                     timerDisplay.classList.add('phase-exercise'); // Màu xanh lá khi hoàn thành
+                     timerProgressContainer.classList.add('hidden'); // Hide the timer circle
+                     statusDisplay.textContent = "Chúc mừng bạn đã hoàn thành!";
+                     statusDisplay.classList.add('workout-complete-animation'); // Add animation class
+                     exerciseNameDisplay.textContent = '🎉'; // Show celebration icon
+                     overallProgress.value = 100;
+                     elapsedTimeDisplay.textContent = formatTime(workoutConfig.totalWorkoutTime);
+                     roundDisplay.textContent = `${workoutConfig.totalRounds}/${workoutConfig.totalRounds}`;
+                     return; // Stop further updates for complete state
                  } else {
-                    statusDisplay.textContent = currentStatusText;
-                    exerciseNameDisplay.textContent = currentExerciseName;
+                    // Ensure timer is visible if not complete
+                    timerProgressContainer.classList.remove('hidden');
+                    statusDisplay.classList.remove('workout-complete-animation'); // Remove animation class if not complete
                  }
 
-                 // --- Update Progress Bars (giữ nguyên) ---
-                 let currentProgressValue = 0; if (currentPhaseTotalDuration > 0 && currentPhase !== 'idle' && currentPhase !== 'complete') { currentProgressValue = ((currentPhaseTotalDuration - currentTimeRemaining) / currentPhaseTotalDuration) * 100; } else if (currentPhase === 'complete') { currentProgressValue = 100; } currentProgress.value = Math.min(100, Math.max(0, currentProgressValue));
-                 let overallProgressValue = 0; if (workoutConfig.totalWorkoutTime > 0 && currentPhase !== 'idle') { overallProgressValue = (totalElapsedTime / workoutConfig.totalWorkoutTime) * 100; } overallProgress.value = Math.min(100, Math.max(0, overallProgressValue)); elapsedTimeDisplay.textContent = formatTime(totalElapsedTime);
-                 if (currentPhase === 'complete') { currentProgress.value = 100; overallProgress.value = 100; elapsedTimeDisplay.textContent = formatTime(workoutConfig.totalWorkoutTime); }
 
-                 // --- Update Round Display (giữ nguyên)---
-                 roundDisplay.textContent = (currentPhase !== 'idle' && currentPhase !== 'complete') ? `${currentRound}/${workoutConfig.totalRounds}` : `--/--`;
+                // --- Update Timer Display & Circle Color/Class ---
+                timerDisplay.textContent = `${Math.floor(seconds)}`;
+                timerDisplay.className = 'timer';
+                currentProgressCircle.setAttribute('class', 'progress-bar');
+                timerDisplay.classList.add(`phase-${currentPhase}`);
+                currentProgressCircle.classList.add(`phase-${currentPhase}`);
+
+                if (isPaused) {
+                    timerDisplay.classList.add('paused');
+                    currentProgressCircle.classList.add('paused');
+                } else {
+                    if (seconds > 0 && seconds <= WARNING_THRESHOLD && !['ready', 'idle', 'complete', 'warmup', 'cooldown'].includes(currentPhase)) {
+                        timerDisplay.classList.add('warning');
+                        currentProgressCircle.classList.add('warning');
+                        if(currentTimeRemaining === WARNING_THRESHOLD) { playSound('warning'); }
+                    }
+                }
+
+                // --- Update Status and Exercise Name ---
+                let currentStatusText = ''; let currentExerciseName = '';
+                 if (isPaused) {
+                    currentStatusText = `Đã tạm dừng (Vòng ${currentRound}/${workoutConfig.totalRounds})`;
+                    if (currentPhase === 'exercise' && currentExerciseIndex >= 0) { currentExerciseName = workoutConfig.exercises[currentExerciseIndex]?.name || `Bài ${currentExerciseIndex + 1}`; }
+                    else if (currentPhase === 'rest') { currentExerciseName = 'Đang nghỉ'; }
+                    else if (currentPhase === 'roundRest') { currentExerciseName = 'Nghỉ giữa vòng'; }
+                } else {
+                    switch (currentPhase) {
+                        case 'idle': currentStatusText = `Sẵn sàng bắt đầu`; break;
+                        case 'warmup': currentStatusText = `Đang khởi động`; break;
+                        case 'ready':
+                            currentStatusText = `Chuẩn bị cho Vòng ${currentRound}...`;
+                            if (currentExerciseIndex >= 0 && workoutConfig.exercises[currentExerciseIndex]) { currentExerciseName = `Bài tiếp theo: ${workoutConfig.exercises[currentExerciseIndex].name}`; }
+                            break;
+                        case 'exercise':
+                            currentStatusText = `Đang tập (Vòng ${currentRound}/${workoutConfig.totalRounds})`;
+                            if (currentExerciseIndex >= 0) { currentExerciseName = workoutConfig.exercises[currentExerciseIndex]?.name || `Bài ${currentExerciseIndex + 1}`; }
+                            break;
+                        case 'rest':
+                            currentStatusText = `Đang nghỉ (Vòng ${currentRound}/${workoutConfig.totalRounds})`;
+                            const nextExIndex = currentExerciseIndex + 1;
+                            if(nextExIndex < workoutConfig.exercises.length) { currentExerciseName = `Tiếp theo: ${workoutConfig.exercises[nextExIndex].name}`; }
+                            else { currentExerciseName = `Chuẩn bị cho vòng sau`; }
+                            break;
+                        case 'roundRest':
+                            currentStatusText = `Đang nghỉ giữa vòng (Kết thúc Vòng ${currentRound})`;
+                            currentExerciseName = `Chuẩn bị cho Vòng ${currentRound + 1}`;
+                            break;
+                        case 'cooldown': currentStatusText = `Đang giãn cơ`; break;
+                        // Complete state handled above
+                        default: currentStatusText = "Trạng thái không xác định";
+                    }
+                }
+                // Update text content if not complete
+                statusDisplay.textContent = currentStatusText;
+                exerciseNameDisplay.textContent = currentExerciseName;
+
+
+                // --- Update Progress ---
+                let currentProgressPercent = 0;
+                if (currentPhaseTotalDuration > 0 && currentPhase !== 'idle') { // Removed complete check as it's handled above
+                    currentProgressPercent = ((currentPhaseTotalDuration - currentTimeRemaining) / currentPhaseTotalDuration) * 100;
+                }
+                setCircleProgress(Math.min(100, Math.max(0, currentProgressPercent)));
+
+                let overallProgressValue = 0;
+                if (workoutConfig.totalWorkoutTime > 0 && currentPhase !== 'idle') {
+                    overallProgressValue = (totalElapsedTime / workoutConfig.totalWorkoutTime) * 100;
+                }
+                overallProgress.value = Math.min(100, Math.max(0, overallProgressValue));
+
+                // --- Update Elapsed Time and Round Display ---
+                elapsedTimeDisplay.textContent = formatTime(totalElapsedTime);
+                roundDisplay.textContent = (currentPhase !== 'idle') ? `${currentRound}/${workoutConfig.totalRounds}` : `--/--`; // Removed complete check
             }
-            // --- END UPDATE ---
 
-            function triggerWorkoutCompletion() { console.log("Workout complete!"); clearInterval(timerIntervalId); timerIntervalId = null; currentPhase = 'complete'; isPaused = false; saveHistoryEntry(); updateWorkoutPageDisplay(); if (startButton && pauseButton && resetButton && backToSetupButton && skipButton) { startButton.classList.add('hidden'); pauseButton.classList.add('hidden'); resetButton.disabled = true; skipButton.classList.add('hidden'); backToSetupButton.classList.remove('hidden'); } playBellSound(); }
-            function runTimerInterval() { if (isPaused || timerIntervalId === null || currentPhase === 'idle' || currentPhase === 'complete') return; currentTimeRemaining--; totalElapsedTime++; if (currentTimeRemaining < 0) { moveToNextPhase(); } else { updateWorkoutPageDisplay(); } }
-            function moveToNextPhase() { console.log(`Phase ${currentPhase} ended. Moving to next.`); playBellSound(); let nextPhase = 'idle'; let nextDuration = 0; switch (currentPhase) { case 'warmup': nextPhase = 'ready'; nextDuration = READY_DURATION; currentExerciseIndex = 0; break; case 'ready': nextPhase = 'exercise'; if (currentExerciseIndex < 0 || currentExerciseIndex >= workoutConfig.exercises.length) currentExerciseIndex = 0; nextDuration = workoutConfig.exercises[currentExerciseIndex]?.duration || 0; break; case 'exercise': const isLastExerciseInRound = currentExerciseIndex >= workoutConfig.exercises.length - 1; if (isLastExerciseInRound) { if (currentRound >= workoutConfig.totalRounds) { if (workoutConfig.cooldownDuration > 0) { nextPhase = 'cooldown'; nextDuration = workoutConfig.cooldownDuration; } else { triggerWorkoutCompletion(); return; } } else { if (workoutConfig.restBetweenRoundsDuration > 0) { nextPhase = 'roundRest'; nextDuration = workoutConfig.restBetweenRoundsDuration; } else { currentRound++; currentExerciseIndex = 0; nextPhase = 'ready'; nextDuration = READY_DURATION; } } } else { if (workoutConfig.restDuration > 0) { nextPhase = 'rest'; nextDuration = workoutConfig.restDuration; } else { currentExerciseIndex++; nextPhase = 'exercise'; nextDuration = workoutConfig.exercises[currentExerciseIndex]?.duration || 0; } } break; case 'rest': currentExerciseIndex++; nextPhase = 'exercise'; nextDuration = workoutConfig.exercises[currentExerciseIndex]?.duration || 0; break; case 'roundRest': currentRound++; currentExerciseIndex = 0; nextPhase = 'ready'; nextDuration = READY_DURATION; break; case 'cooldown': triggerWorkoutCompletion(); return; case 'idle': case 'complete': resetTimerStateForNewWorkout(); return; default: console.error("Unknown phase transition from:", currentPhase); nextPhase = 'idle'; nextDuration = 0; } currentPhase = nextPhase; currentTimeRemaining = nextDuration; currentPhaseTotalDuration = nextDuration; updateWorkoutPageDisplay(); if (skipButton) { skipButton.classList.toggle('hidden', !['warmup', 'exercise', 'rest', 'roundRest', 'cooldown'].includes(currentPhase)); } if (pauseButton && !isPaused && currentPhase !== 'idle' && currentPhase !== 'complete' && currentPhase !== 'ready') { pauseButton.classList.remove('hidden'); } }
-            function handleStartResumeClick() { if (!startButton || !pauseButton || !resetButton || !backToSetupButton || !skipButton) return; if (currentPhase === 'idle' || currentPhase === 'complete') { if (!workoutConfig || !workoutConfig.exercises || workoutConfig.exercises.length === 0 || (workoutConfig.totalWorkoutTime <= 0 && workoutConfig.warmupDuration <=0 && workoutConfig.cooldownDuration <=0) ) { alert("Cấu hình bài tập không hợp lệ hoặc chưa được tải/nhập. Vui lòng quay lại Cài đặt."); return; } } if (isPaused) { console.log("Resuming timer."); isPaused = false; if (!timerIntervalId) { timerIntervalId = setInterval(runTimerInterval, 1000); } startButton.classList.add('hidden'); pauseButton.classList.remove('hidden'); resetButton.disabled = false; skipButton.classList.toggle('hidden', !['warmup', 'exercise', 'rest', 'roundRest', 'cooldown'].includes(currentPhase)); backToSetupButton.classList.add('hidden'); } else if (currentPhase === 'idle' || currentPhase === 'complete') { console.log("Starting new workout sequence..."); resetTimerStateForNewWorkout(); totalElapsedTime = 0; let firstPhase = 'ready'; let firstDuration = READY_DURATION; currentExerciseIndex = 0; if (workoutConfig.warmupDuration > 0) { firstPhase = 'warmup'; firstDuration = workoutConfig.warmupDuration; currentExerciseIndex = -1; } currentPhase = firstPhase; currentTimeRemaining = firstDuration; currentPhaseTotalDuration = firstDuration; if (timerIntervalId) clearInterval(timerIntervalId); timerIntervalId = setInterval(runTimerInterval, 1000); startButton.classList.add('hidden'); pauseButton.classList.add('hidden'); resetButton.disabled = false; skipButton.classList.toggle('hidden', firstPhase !== 'warmup'); backToSetupButton.classList.add('hidden'); } updateWorkoutPageDisplay(); }
-            function handlePauseClick() { if (!startButton || !pauseButton || !resetButton || !backToSetupButton || !skipButton) return; if (timerIntervalId !== null && !isPaused && !['idle', 'complete', 'ready'].includes(currentPhase)) { console.log("Pausing timer."); isPaused = true; pauseButton.classList.add('hidden'); startButton.classList.remove('hidden'); startButton.textContent = 'Tiếp tục'; resetButton.disabled = false; skipButton.classList.add('hidden'); backToSetupButton.classList.remove('hidden'); updateWorkoutPageDisplay(); } }
-            function handleResetClick() { if ((timerIntervalId !== null || isPaused) && currentPhase !== 'idle' && currentPhase !== 'complete') { if (confirm("Bạn có chắc muốn dừng và đặt lại bài tập hiện tại không? Tiến trình sẽ bị mất.")) { console.log("Resetting timer on workout page."); clearInterval(timerIntervalId); timerIntervalId = null; resetTimerStateForNewWorkout(); } } }
-            function handleSkipClick() { if (timerIntervalId !== null && !isPaused && ['warmup', 'exercise', 'rest', 'roundRest', 'cooldown'].includes(currentPhase)) { console.log(`Skipping current phase: ${currentPhase}`); totalElapsedTime += Math.max(0, currentTimeRemaining); currentTimeRemaining = -1; updateWorkoutPageDisplay(); } }
+             /** Finalizes the workout. */
+             function triggerWorkoutCompletion() {
+                 console.log("Workout complete!");
+                 clearInterval(timerIntervalId); timerIntervalId = null;
+                 currentPhase = 'complete'; isPaused = false;
+                 saveHistoryEntry(); releaseWakeLock();
+
+                 // Update UI specifically for completion state (NEW)
+                 updateWorkoutPageDisplay(); // This will now hide timer and show animation
+
+                 if (startButton && pauseButton && resetButton && backToSetupButton && skipButton) {
+                     startButton.classList.add('hidden'); pauseButton.classList.add('hidden');
+                     resetButton.disabled = true; skipButton.classList.add('hidden');
+                     backToSetupButton.classList.remove('hidden');
+                 }
+                 playSound('complete');
+                 triggerPhaseFlash(); // Keep the background flash
+             }
+
+            /** The main timer loop function. */
+            function runTimerInterval() {
+                if (isPaused || timerIntervalId === null || currentPhase === 'idle' || currentPhase === 'complete') return;
+                currentTimeRemaining--; totalElapsedTime++;
+                if (currentTimeRemaining < 0) {
+                    moveToNextPhase();
+                } else {
+                    updateWorkoutPageDisplay();
+                }
+            }
+
+             /** Adds a temporary flash effect. */
+             function triggerPhaseFlash() {
+                 if (displayArea) {
+                     const handleAnimationEnd = () => {
+                         displayArea.classList.remove('phase-flash-effect');
+                         displayArea.removeEventListener('animationend', handleAnimationEnd);
+                     };
+                     displayArea.classList.remove('phase-flash-effect');
+                     displayArea.classList.add('phase-flash-effect');
+                     displayArea.addEventListener('animationend', handleAnimationEnd, { once: true });
+                 }
+             }
+
+            /** Determines and transitions to the next phase. */
+            function moveToNextPhase() {
+                console.log(`Phase ${currentPhase} ended. Moving to next.`);
+                if(currentPhase !== 'idle' && currentPhase !== 'ready') { playSound('phaseEnd'); }
+                triggerPhaseFlash();
+
+                let nextPhase = 'idle'; let nextDuration = 0;
+                switch (currentPhase) {
+                    case 'warmup': nextPhase = 'ready'; nextDuration = READY_DURATION; currentExerciseIndex = 0; break;
+                    case 'ready':
+                        nextPhase = 'exercise';
+                        if (currentExerciseIndex < 0 || currentExerciseIndex >= workoutConfig.exercises.length) currentExerciseIndex = 0;
+                        nextDuration = workoutConfig.exercises[currentExerciseIndex]?.duration || 0;
+                        break;
+                    case 'exercise':
+                        const isLastExerciseInRound = currentExerciseIndex >= workoutConfig.exercises.length - 1;
+                        if (isLastExerciseInRound) {
+                            if (currentRound >= workoutConfig.totalRounds) {
+                                if (workoutConfig.cooldownDuration > 0) { nextPhase = 'cooldown'; nextDuration = workoutConfig.cooldownDuration; }
+                                else { triggerWorkoutCompletion(); return; }
+                            } else {
+                                if (workoutConfig.restBetweenRoundsDuration > 0) { nextPhase = 'roundRest'; nextDuration = workoutConfig.restBetweenRoundsDuration; }
+                                else { currentRound++; currentExerciseIndex = 0; nextPhase = 'ready'; nextDuration = READY_DURATION; }
+                            }
+                        } else {
+                            if (workoutConfig.restDuration > 0) { nextPhase = 'rest'; nextDuration = workoutConfig.restDuration; }
+                            else { currentExerciseIndex++; nextPhase = 'exercise'; nextDuration = workoutConfig.exercises[currentExerciseIndex]?.duration || 0; }
+                        }
+                        break;
+                    case 'rest': currentExerciseIndex++; nextPhase = 'exercise'; nextDuration = workoutConfig.exercises[currentExerciseIndex]?.duration || 0; break;
+                    case 'roundRest': currentRound++; currentExerciseIndex = 0; nextPhase = 'ready'; nextDuration = READY_DURATION; break;
+                    case 'cooldown': triggerWorkoutCompletion(); return;
+                    case 'idle': case 'complete': resetTimerStateForNewWorkout(); return;
+                    default: console.error("Unknown phase transition from:", currentPhase); nextPhase = 'idle'; nextDuration = 0;
+                }
+                currentPhase = nextPhase; currentTimeRemaining = nextDuration; currentPhaseTotalDuration = nextDuration;
+                updateWorkoutPageDisplay();
+                if (skipButton) { skipButton.classList.toggle('hidden', !['warmup', 'exercise', 'rest', 'roundRest', 'cooldown'].includes(currentPhase)); }
+                 if (pauseButton && !isPaused && currentPhase !== 'idle' && currentPhase !== 'complete' && currentPhase !== 'ready') { pauseButton.classList.remove('hidden'); }
+            }
+
+            /** Handles click on the Start/Resume button. */
+            function handleStartResumeClick() {
+                if (!startButton || !pauseButton || !resetButton || !backToSetupButton || !skipButton) return;
+                 if (currentPhase === 'idle' || currentPhase === 'complete') {
+                     if (!workoutConfig || !workoutConfig.exercises || workoutConfig.exercises.length === 0 || (workoutConfig.totalWorkoutTime <= 0 && workoutConfig.warmupDuration <=0 && workoutConfig.cooldownDuration <=0) ) {
+                         alert("Cấu hình bài tập không hợp lệ hoặc chưa được tải/nhập. Vui lòng quay lại Cài đặt."); return;
+                     }
+                 }
+                if (isPaused) {
+                    console.log("Resuming timer."); isPaused = false;
+                    if (!timerIntervalId) { timerIntervalId = setInterval(runTimerInterval, 1000); }
+                    if (wakeLockButton?.classList.contains('wakelock-active')) { requestWakeLock(); }
+                    startButton.classList.add('hidden'); pauseButton.classList.remove('hidden');
+                    resetButton.disabled = false;
+                    skipButton.classList.toggle('hidden', !['warmup', 'exercise', 'rest', 'roundRest', 'cooldown'].includes(currentPhase));
+                    backToSetupButton.classList.add('hidden');
+                } else if (currentPhase === 'idle' || currentPhase === 'complete') {
+                    console.log("Starting new workout sequence...");
+                    resetTimerStateForNewWorkout(); totalElapsedTime = 0;
+                    let firstPhase = 'ready'; let firstDuration = READY_DURATION; currentExerciseIndex = 0;
+                    if (workoutConfig.warmupDuration > 0) {
+                        firstPhase = 'warmup'; firstDuration = workoutConfig.warmupDuration; currentExerciseIndex = -1;
+                    }
+                    currentPhase = firstPhase; currentTimeRemaining = firstDuration; currentPhaseTotalDuration = firstDuration;
+                    if (timerIntervalId) clearInterval(timerIntervalId);
+                    timerIntervalId = setInterval(runTimerInterval, 1000);
+                    if (wakeLockButton?.classList.contains('wakelock-active')) { requestWakeLock(); }
+                    startButton.classList.add('hidden');
+                    pauseButton.classList.toggle('hidden', firstPhase === 'ready');
+                    resetButton.disabled = false;
+                    skipButton.classList.toggle('hidden', firstPhase !== 'warmup');
+                    backToSetupButton.classList.add('hidden');
+                }
+                updateWorkoutPageDisplay();
+            }
+
+            /** Handles click on the Pause button. */
+            function handlePauseClick() {
+                if (!startButton || !pauseButton || !resetButton || !backToSetupButton || !skipButton) return;
+                if (timerIntervalId !== null && !isPaused && !['idle', 'complete', 'ready'].includes(currentPhase)) {
+                    console.log("Pausing timer."); isPaused = true; releaseWakeLock();
+                    pauseButton.classList.add('hidden'); startButton.classList.remove('hidden');
+                    startButton.textContent = 'Tiếp tục'; resetButton.disabled = false;
+                    skipButton.classList.add('hidden'); backToSetupButton.classList.remove('hidden');
+                    updateWorkoutPageDisplay();
+                }
+            }
+
+            /** Handles click on the Reset button. */
+            function handleResetClick() {
+                if ((timerIntervalId !== null || isPaused) && currentPhase !== 'idle' && currentPhase !== 'complete') {
+                    if (confirm("Bạn có chắc muốn dừng và đặt lại bài tập hiện tại không? Tiến trình sẽ bị mất.")) {
+                        console.log("Resetting timer on workout page.");
+                        clearInterval(timerIntervalId); timerIntervalId = null;
+                        releaseWakeLock(); resetTimerStateForNewWorkout();
+                    }
+                }
+            }
+
+            /** Handles click on the Skip button. */
+            function handleSkipClick() {
+                if (timerIntervalId !== null && !isPaused && ['warmup', 'exercise', 'rest', 'roundRest', 'cooldown'].includes(currentPhase)) {
+                    console.log(`Skipping current phase: ${currentPhase}`);
+                    totalElapsedTime += Math.max(0, currentTimeRemaining);
+                    currentTimeRemaining = -1;
+                    updateWorkoutPageDisplay(); // Update display immediately after setting time to -1
+                    // runTimerInterval will handle the phase transition on the next tick
+                }
+            }
+
+
+            // =====================================
+            // --- SCREEN WAKE LOCK FUNCTIONS ---
+            // =====================================
+            // (No changes needed in wake lock functions)
+            function updateWakeLockButtonState(isActive) {
+                if (!wakeLockButton) return;
+                if (isActive) { wakeLockButton.textContent = 'Đang giữ sáng'; wakeLockButton.classList.add('wakelock-active'); }
+                else { wakeLockButton.textContent = 'Giữ màn hình sáng'; wakeLockButton.classList.remove('wakelock-active'); }
+            }
+            async function requestWakeLock() {
+                if (!('wakeLock' in navigator) || !window.isSecureContext) {
+                    console.warn('Wake Lock API not supported or context not secure.');
+                    updateWakeLockButtonState(false); wakeLockButton?.setAttribute('disabled', 'true');
+                    wakeLockButton?.setAttribute('title', 'Giữ màn hình sáng (Không hỗ trợ hoặc không phải HTTPS)'); return;
+                }
+                if (wakeLockSentinel) { console.log("Wake lock already active."); return; }
+                try {
+                    wakeLockSentinel = await navigator.wakeLock.request('screen');
+                    updateWakeLockButtonState(true); console.log('Screen Wake Lock is active.');
+                    wakeLockSentinel.addEventListener('release', () => {
+                        console.log('Wake Lock was released.');
+                         if (wakeLockSentinel) { wakeLockSentinel = null; updateWakeLockButtonState(false); console.log('Wake Lock UI updated after system release.'); }
+                    });
+                } catch (err) { wakeLockSentinel = null; updateWakeLockButtonState(false); console.error(`Wake Lock request failed: ${err.name}, ${err.message}`); }
+            }
+            async function releaseWakeLock() {
+                if (!wakeLockSentinel) { return; }
+                try {
+                    console.log("Releasing wake lock..."); await wakeLockSentinel.release();
+                    wakeLockSentinel = null; updateWakeLockButtonState(false); console.log("Wake lock released successfully by function call.");
+                } catch (err) { console.error(`Wake Lock release failed: ${err.name}, ${err.message}`); wakeLockSentinel = null; updateWakeLockButtonState(false); }
+            }
+            function handleWakeLockButtonClick() { if (wakeLockSentinel) { releaseWakeLock(); } else { requestWakeLock(); } }
+             async function handleVisibilityChange() {
+                 if (!wakeLockButton || wakeLockButton.disabled) return;
+                 if (document.visibilityState === 'visible' && wakeLockButton.classList.contains('wakelock-active') && !wakeLockSentinel) {
+                     console.log("Document visible, reacquiring wake lock..."); await requestWakeLock();
+                 }
+             }
+            function setupWakeLockButton() {
+                if (!wakeLockButton) return;
+                if ('wakeLock' in navigator && window.isSecureContext) {
+                    console.log("Wake Lock API supported and context is secure.");
+                    wakeLockButton.removeAttribute('disabled'); wakeLockButton.setAttribute('title', 'Bật/Tắt giữ màn hình sáng khi tập');
+                    wakeLockButton.addEventListener('click', handleWakeLockButtonClick);
+                    document.addEventListener('visibilitychange', handleVisibilityChange);
+                     window.addEventListener('pagehide', releaseWakeLock);
+                     window.addEventListener('beforeunload', releaseWakeLock);
+                } else {
+                    console.warn('Wake Lock API not supported or context not secure (HTTPS required).');
+                    wakeLockButton.textContent = 'Giữ sáng (Không khả dụng)'; wakeLockButton.setAttribute('disabled', 'true');
+                    wakeLockButton.setAttribute('title', 'Tính năng này yêu cầu HTTPS hoặc không được trình duyệt hỗ trợ.');
+                }
+            }
 
             // ==============================
-            // --- EVENT LISTENERS (Giữ nguyên) ---
+            // --- EVENT LISTENERS ---
             // ==============================
-            function addSafeEventListener(element, event, handler, elementName) { if (element) { element.addEventListener(event, handler); } else { console.error(`${elementName || 'Element'} not found, cannot add listener for ${event}`); } }
-            addSafeEventListener(addExerciseButton, 'click', () => { addExerciseInput(); saveLastInputs(); }, 'addExerciseButton'); addSafeEventListener(removeLastExerciseButton, 'click', removeLastExerciseInput, 'removeLastExerciseButton'); addSafeEventListener(goToWorkoutButton, 'click', prepareAndSwitchToWorkout, 'goToWorkoutButton'); addSafeEventListener(saveRoutineButton, 'click', handleSaveRoutine, 'saveRoutineButton'); addSafeEventListener(loadRoutineButton, 'click', handleLoadRoutine, 'loadRoutineButton'); addSafeEventListener(deleteRoutineButton, 'click', handleDeleteRoutine, 'deleteRoutineButton'); addSafeEventListener(clearAndShowInputButton, 'click', handleClearAndShowInput, 'clearAndShowInputButton');
-            addSafeEventListener(savedRoutinesSelect, 'change', () => { if (savedRoutinesSelect.value === "") { showNewInputArea(); loadedRoutineData = null; } checkRoutineSelectState(); }, 'savedRoutinesSelect');
-            const setupInputsToTrack = [ routineNameInput, warmupDurationInput, restDurationInput, totalRoundsInput, restBetweenRoundsInput, cooldownDurationInput, simpleTotalExercisesInput, simpleExerciseDurationInput ]; setupInputsToTrack.forEach(input => { addSafeEventListener(input, 'input', saveLastInputs, input?.id); }); if (exerciseListContainer) { exerciseListContainer.addEventListener('input', (event) => { if (event.target && (event.target.dataset.type === 'name' || event.target.dataset.type === 'duration')) { saveLastInputs(); } }); } setupModeRadios.forEach(radio => { addSafeEventListener(radio, 'change', saveLastInputs, radio.id); });
-            addSafeEventListener(startButton, 'click', handleStartResumeClick, 'startButton'); addSafeEventListener(pauseButton, 'click', handlePauseClick, 'pauseButton'); addSafeEventListener(resetButton, 'click', handleResetClick, 'resetButton'); addSafeEventListener(skipButton, 'click', handleSkipClick, 'skipButton'); addSafeEventListener(muteButton, 'click', toggleMute, 'muteButton'); addSafeEventListener(backToSetupButton, 'click', () => { console.log("Back to Setup clicked."); if (currentPhase === 'idle' || currentPhase === 'complete' || isPaused) { if (isPaused) { if (!confirm("Bài tập đang tạm dừng. Quay lại cài đặt sẽ hủy tiến trình hiện tại. Tiếp tục?")) { return; } } clearInterval(timerIntervalId); timerIntervalId = null; resetTimerStateForNewWorkout(); showPage('setupPage'); } else { alert("Vui lòng tạm dừng hoặc dừng hẳn bài tập trước khi quay lại Cài đặt."); } }, 'backToSetupButton');
+            function addSafeEventListener(element, event, handler, elementName) {
+                if (element) { element.addEventListener(event, handler); }
+                else { console.error(`${elementName || 'Element'} not found, cannot add listener for ${event}`); }
+            }
+            // Setup Page
+            addSafeEventListener(addExerciseButton, 'click', () => { addExerciseInput(); saveLastInputs(); }, 'addExerciseButton');
+            addSafeEventListener(removeLastExerciseButton, 'click', removeLastExerciseInput, 'removeLastExerciseButton');
+            addSafeEventListener(goToWorkoutButton, 'click', prepareAndSwitchToWorkout, 'goToWorkoutButton');
+            addSafeEventListener(saveRoutineButton, 'click', handleSaveRoutine, 'saveRoutineButton');
+            addSafeEventListener(loadRoutineButton, 'click', handleLoadRoutine, 'loadRoutineButton');
+            addSafeEventListener(deleteRoutineButton, 'click', handleDeleteRoutine, 'deleteRoutineButton');
+            addSafeEventListener(clearAndShowInputButton, 'click', handleClearAndShowInput, 'clearAndShowInputButton');
+             addSafeEventListener(savedRoutinesSelect, 'change', () => {
+                 if (savedRoutinesSelect.value === "") { showNewInputArea(); loadedRoutineData = null; }
+                 else { updateSetupTimePreview(); }
+                 checkRoutineSelectState();
+             }, 'savedRoutinesSelect');
+            const inputsForPreviewAndSave = [ routineNameInput, warmupDurationInput, restDurationInput, totalRoundsInput, restBetweenRoundsInput, cooldownDurationInput, simpleTotalExercisesInput, simpleExerciseDurationInput ];
+            inputsForPreviewAndSave.forEach(input => { addSafeEventListener(input, 'input', () => { saveLastInputs(); updateSetupTimePreview(); }, input?.id); });
+            if (exerciseListContainer) {
+                exerciseListContainer.addEventListener('input', (event) => {
+                    if (event.target && (event.target.dataset.type === 'name' || event.target.dataset.type === 'duration')) {
+                        saveLastInputs(); if(event.target.dataset.type === 'duration') { updateSetupTimePreview(); }
+                    }
+                });
+            }
+             setupModeRadios.forEach(radio => { addSafeEventListener(radio, 'change', () => { updateSetupTimePreview(); }, radio.id + "_preview"); });
+             // Sound Settings Listeners - Save settings when changed
+             addSafeEventListener(soundPhaseEndSelect, 'change', saveSettings, 'soundPhaseEndSelect');
+             addSafeEventListener(soundWarningSelect, 'change', saveSettings, 'soundWarningSelect');
+             addSafeEventListener(soundCompleteSelect, 'change', saveSettings, 'soundCompleteSelect');
+
+            // Workout Page
+            addSafeEventListener(startButton, 'click', handleStartResumeClick, 'startButton');
+            addSafeEventListener(pauseButton, 'click', handlePauseClick, 'pauseButton');
+            addSafeEventListener(resetButton, 'click', handleResetClick, 'resetButton');
+            addSafeEventListener(skipButton, 'click', handleSkipClick, 'skipButton');
+            addSafeEventListener(muteButton, 'click', toggleMute, 'muteButton');
+            addSafeEventListener(backToSetupButton, 'click', () => {
+                console.log("Back to Setup clicked.");
+                if (currentPhase === 'idle' || currentPhase === 'complete' || isPaused) {
+                    if (isPaused) { if (!confirm("Bài tập đang tạm dừng. Quay lại cài đặt sẽ hủy tiến trình hiện tại. Tiếp tục?")) { return; } }
+                    clearInterval(timerIntervalId); timerIntervalId = null; releaseWakeLock();
+                    resetTimerStateForNewWorkout(); showPage('setupPage');
+                } else { alert("Vui lòng tạm dừng hoặc dừng hẳn bài tập trước khi quay lại Cài đặt."); }
+            }, 'backToSetupButton');
 
             // ==============================
-            // --- INITIALIZATION (Giữ nguyên) ---
+            // --- INITIALIZATION ---
             // ==============================
-            console.log("App initializing..."); loadSettings(); loadLastInputs(); loadRoutines(); loadHistory(); checkRoutineSelectState(); updateRemoveLastButtonState(); showPage('setupPage'); console.log("App initialized.");
+            console.log("App initializing...");
+            loadSettings();
+            loadLastInputs();
+            loadRoutines();
+            loadHistory();
+            setupWakeLockButton();
+            checkRoutineSelectState();
+            updateRemoveLastButtonState();
+            showPage('setupPage');
+            updateSetupTimePreview();
+            console.log("App initialized.");
 
         }); // End of DOMContentLoaded
     </script>
